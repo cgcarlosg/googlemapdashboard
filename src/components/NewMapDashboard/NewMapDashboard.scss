@@ -6,6 +6,15 @@
 #{$self}__container {
     border: 1px solid #ccc;
     height: 500px;
+    position: relative;
+    width: 100%;
+}
+
+#{$self}__map {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
     width: 100%;
 }
 }
