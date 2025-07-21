@@ -22,7 +22,7 @@ const MapDashboard: React.FC = () => {
       | google.maps.Rectangle
     >
   >([]);
-
+console.log(shapes)
   const onOverlayComplete = useCallback(
     (e: google.maps.drawing.OverlayCompleteEvent) => {
       const newShape = e.overlay;
