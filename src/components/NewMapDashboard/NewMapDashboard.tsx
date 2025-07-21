@@ -40,7 +40,7 @@ const handleMapClick = (event: MapMouseEvent) => {
             disableDefaultUI={false}
           >
             {markers.map((marker, index) => (
-              <AdvancedMarker key={index} position={marker}>
+              <AdvancedMarker key={index} position={marker} title={`Marcador en: ${marker.lat.toFixed(4)}, ${marker.lng.toFixed(4)}`}>
                 <Pin />
               </AdvancedMarker>
             ))}
