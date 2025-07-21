@@ -1,7 +1,14 @@
 // src/components/MapDashboard.tsx
 import React from "react";
 import { useLoadScript } from "@react-google-maps/api";
+import { GoogleMap } from "@react-google-maps/api";
+
 import './MapDashboard.scss';
+
+const center = {
+  lat: 4.710989,
+  lng: -74.072090,
+};
 
 const MapDashboard: React.FC = () => {
   const { isLoaded, loadError } = useLoadScript({
@@ -13,9 +20,15 @@ const MapDashboard: React.FC = () => {
   if (!isLoaded) return <div>Cargando mapa...</div>;
 
   return (
-    <div className={"dashboard"} style={{ padding: "1rem" }}>
+    <div className={"dashboard"}>
       <h2>Dashboard de Mapa</h2>
-      <div>Mapa</div>
+       <GoogleMap
+        mapContainerClassName="dashboard__container"
+        center={center}
+        zoom={12}
+      >
+        {/* To Add Logic */}
+      </GoogleMap>
     </div>
   );
 };

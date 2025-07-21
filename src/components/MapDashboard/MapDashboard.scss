@@ -1,5 +1,11 @@
 .dashboard {
     $self: &;
 
-    background-color: antiquewhite;
+    padding: 1rem;
+
+#{$self}__container {
+    border: 1px solid #ccc;
+    height: 500px;
+    width: 100%;
+}
 }
