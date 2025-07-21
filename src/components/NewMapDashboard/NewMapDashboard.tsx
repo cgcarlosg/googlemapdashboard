@@ -3,7 +3,7 @@ import {
   APIProvider,
   Map,
   AdvancedMarker,
-  Pin,
+  Pin
 } from "@vis.gl/react-google-maps";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps";
 
