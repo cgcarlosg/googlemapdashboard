@@ -1,3 +1,8 @@
+# library to use with react according developers.google.com
+@vis.gl/react-google-maps
+https://developers.google.com/maps/documentation/javascript/libraries-open-source?hl=es-419
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

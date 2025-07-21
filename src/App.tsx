@@ -1,4 +1,4 @@
-import MapDashboard from './components/MapDashboard/MapDashboard';
+import MapDashboard from './components/NewMapDashboard/NewMapDashboard';
 import './App.css'
 
 function App() {
