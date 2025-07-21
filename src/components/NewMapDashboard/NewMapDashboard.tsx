@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
-import type { MapMouseEvent } from '@vis.gl/react-google-maps';
+import React, { useState } from "react";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  Pin,
+} from "@vis.gl/react-google-maps";
+import type { MapMouseEvent } from "@vis.gl/react-google-maps";
 
-import './NewMapDashboard.scss';
+import "./NewMapDashboard.scss";
 
 const center = { lat: 4.710989, lng: -74.07209 };
-
-const NewMapDashboard: React.FC = () => {
- const [markers, setMarkers] = useState<Array<google.maps.LatLngLiteral>>([]);
-  
-
-const handleMapClick = (event: MapMouseEvent) => {
-  const latLng = event.detail.latLng;
-
-  if (!latLng) return; 
-  const newMarker = {
-    lat: latLng.lat,
-    lng: latLng.lng,
+  type MarkerData = {
+    id: string;
+    position: google.maps.LatLngLiteral;
   };
 
-  setMarkers((prev) => [...prev, newMarker]);
-  console.log('previo marcador:', markers);
-  console.log('Nuevo marcador:', newMarker);
-};
+const NewMapDashboard: React.FC = () => {
+
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+
+  const handleMapClick = (event: MapMouseEvent) => {
+    const latLng = event.detail.latLng;
+
+    if (!latLng) return;
+
+  const newMarker: MarkerData = {
+      id: crypto.randomUUID(),
+      position: {
+        lat: latLng.lat,
+        lng: latLng.lng,
+      },
+    };
+
+    setMarkers((prev) => [...prev, newMarker]);
+    console.log("previo marcador:", markers);
+    console.log("Nuevo marcador:", newMarker);
+  };
 
   return (
     <div className="dashboard">
@@ -30,7 +43,7 @@ const handleMapClick = (event: MapMouseEvent) => {
 
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <div className="dashboard__container">
-        <Map
+          <Map
             className="dashboard__map"
             defaultCenter={center}
             defaultZoom={12}
@@ -39,8 +52,19 @@ const handleMapClick = (event: MapMouseEvent) => {
             gestureHandling="greedy"
             disableDefaultUI={false}
           >
-            {markers.map((marker, index) => (
-              <AdvancedMarker key={index} position={marker} title={`Marcador en: ${marker.lat.toFixed(4)}, ${marker.lng.toFixed(4)}`}>
+            {markers.map((marker) => (
+              <AdvancedMarker
+                key={marker.id}
+                position={marker.position}
+                 title={`Marcador en: ${marker.position.lat.toFixed(
+                  4
+                )},  ${marker.position.lng.toFixed(4)}`}
+               onClick={() => {
+                  setMarkers((prev) =>
+                    prev.filter((m) => m.id !== marker.id)
+                  );
+                }}
+              >
                 <Pin />
               </AdvancedMarker>
             ))}
