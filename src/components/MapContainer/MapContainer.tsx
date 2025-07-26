@@ -3,20 +3,17 @@ import {
   APIProvider,
   Map,
   AdvancedMarker,
-  Pin
+  Pin,
 } from "@vis.gl/react-google-maps";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps";
+import type { MarkerData } from "../../types";
 
-import "./NewMapDashboard.scss";
+import "./MapContainer.scss";
 
 const center = { lat: 4.710989, lng: -74.07209 };
-  type MarkerData = {
-    id: string;
-    position: google.maps.LatLngLiteral;
-  };
 
-const NewMapDashboard: React.FC = () => {
 
+const MapContainer: React.FC = () => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
 
   const handleMapClick = (event: MapMouseEvent) => {
@@ -24,7 +21,7 @@ const NewMapDashboard: React.FC = () => {
 
     if (!latLng) return;
 
-  const newMarker: MarkerData = {
+    const newMarker: MarkerData = {
       id: crypto.randomUUID(),
       position: {
         lat: latLng.lat,
@@ -38,13 +35,11 @@ const NewMapDashboard: React.FC = () => {
   };
 
   return (
-    <div className="dashboard">
-      <h2>Nuevo Dashboard (Google recomendado)</h2>
-
+    <div className="mapcontainer">
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-        <div className="dashboard__container">
+        <div className="mapcontainer__container">
           <Map
-            className="dashboard__map"
+            className="mapcontainer__map"
             defaultCenter={center}
             defaultZoom={12}
             mapId={import.meta.env.VITE_GOOGLE_MAP_ID}
@@ -56,13 +51,11 @@ const NewMapDashboard: React.FC = () => {
               <AdvancedMarker
                 key={marker.id}
                 position={marker.position}
-                 title={`Marcador en: ${marker.position.lat.toFixed(
+                title={`Marcador en: ${marker.position.lat.toFixed(
                   4
                 )},  ${marker.position.lng.toFixed(4)}`}
-               onClick={() => {
-                  setMarkers((prev) =>
-                    prev.filter((m) => m.id !== marker.id)
-                  );
+                onClick={() => {
+                  setMarkers((prev) => prev.filter((m) => m.id !== marker.id));
                 }}
               >
                 <Pin />
@@ -75,4 +68,4 @@ const NewMapDashboard: React.FC = () => {
   );
 };
 
-export default NewMapDashboard;
+export default MapContainer;

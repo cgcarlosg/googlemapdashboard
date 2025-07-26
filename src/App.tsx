@@ -1,13 +1,12 @@
-import MapDashboard from './components/NewMapDashboard/NewMapDashboard';
+import MapContainer from './components/MapContainer/MapContainer';
 import './App.css'
 
 function App() {
 
   return (
-    <>
-        <h1>Dashboard con Google Maps</h1>
-      <MapDashboard />
-    </>
+    <div className="app">
+      <MapContainer />
+    </div>
   )
 }
 
