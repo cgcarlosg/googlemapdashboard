@@ -38,6 +38,7 @@ const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
 
       <div className="header__search">
         <input
+          data-testid="location-input"
           id="location-input"
           type="text"
           value={query}
@@ -45,7 +46,7 @@ const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
             setQuery(e.target.value);
             setShowSuggestions(true);
           }}
-          placeholder="Escribe una ubicación..."
+          placeholder="Escribe una ubicacion..."
           autoComplete="off"
         />
 
