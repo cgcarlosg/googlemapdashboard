@@ -1,20 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { MarkerData } from "../../types";
 import {
   APIProvider,
   Map,
   AdvancedMarker,
   Pin,
+  type MapMouseEvent,
 } from "@vis.gl/react-google-maps";
-import type { MapMouseEvent } from "@vis.gl/react-google-maps";
-
 
 import "./MapContainer.scss";
 import type { AppProps } from "../../types";
 
-
 const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
+  const mapRef = useRef<google.maps.Map | null>(null);
+
+  const lastCenter = useRef(center);
+
+  useEffect(() => {
+    if (
+      mapRef.current &&
+      (center.lat !== lastCenter.current.lat ||
+        center.lng !== lastCenter.current.lng)
+    ) {
+      mapRef.current.panTo(center);
+      lastCenter.current = center;
+    }
+  }, [center]);
 
   const handleMapClick = (event: MapMouseEvent) => {
     const latLng = event.detail.latLng;
@@ -40,12 +52,17 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
         <div className="mapcontainer__container">
           <Map
             className="mapcontainer__map"
-            center={center}
+            defaultCenter={center}
             defaultZoom={12}
             mapId={import.meta.env.VITE_GOOGLE_MAP_ID}
             onClick={handleMapClick}
             gestureHandling="greedy"
             disableDefaultUI={false}
+            onIdle={(ev) => {
+              if (!mapRef.current) {
+                mapRef.current = ev.map;
+              }
+            }}
           >
             {markers.map((marker) => (
               <AdvancedMarker
