@@ -1,11 +1,19 @@
+import { useState } from 'react';
 import MapContainer from './components/MapContainer/MapContainer';
-import './App.css'
 
-function App() {
+import './App.css'
+import Header from './components/Header/Header';
+
+const App = () => {
+
+    const defaultCenter = { lat: 4.710989, lng: -74.07209 };
+    const [center, setCenter] = useState(defaultCenter);
+
 
   return (
     <div className="app">
-      <MapContainer />
+      <Header onLocationSelect={setCenter}/>
+      <MapContainer center={center}/>
     </div>
   )
 }

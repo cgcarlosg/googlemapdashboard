@@ -1,0 +1,90 @@
+.header {
+    $self: &;
+
+    align-items: center;
+    background-color: #0b304f;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    height: 80px;
+    max-width: 100%;
+    padding: 0 1rem;
+    width: 100%;
+
+    @media (min-width: 768px) {
+        height: 100px;
+        padding: 0 2rem;
+    }
+
+    @media (min-width: 1200px) {
+          height: 120px;
+    }
+
+    #{$self}__brand {
+
+        box-sizing: border-box;
+        display: flex;
+        height: 60px;
+        padding: 0.5rem 0;
+        width: auto;
+
+         &--mobileimg {
+            display: block;
+            max-height: 100%;
+            max-width: 90px;
+            object-fit: contain;
+            width: auto;
+
+            @media (min-width: 768px) {
+                display: none;
+            }
+        }
+
+        &--deskimg {
+            display: none;
+            max-height: 100%;
+            object-fit: contain;
+            width: auto;
+
+            @media (min-width: 768px) {
+                display: block;
+            }
+        }
+    }
+
+     #{$self}__search {
+        align-items: center;
+        background-color: transparent;
+        box-sizing: border-box;
+        display: flex;
+        height: 50px;
+        max-width: 400px;
+        width: 100%;
+        position: relative;
+
+        
+        input {
+            height: 100%;
+            padding: 0 0.5rem;
+            width: 100%;
+
+            @media (min-width: 768px) {
+               padding: 0 2rem;
+                
+            }
+        }
+     }
+
+      #{$self}__search--suggestions {
+        background-color: white;
+        left: 0;
+        list-style: none;
+        padding: 1rem;
+        position: absolute;
+        text-align: left;
+        top: 40px;
+        width: 100%;
+        z-index: 3;
+      }
+}

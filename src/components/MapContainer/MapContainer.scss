@@ -1,22 +1,24 @@
 .mapcontainer {
-    $self: &;
+  $self: &;
 
-    padding: 1rem;
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
 
-#{$self}__container {
+  #{$self}__container {
     border: 1px solid #ccc;
-    height: 500px;
-    position: relative;
-    width: 100%;
-}
-
-#{$self}__map {
     height: 100%;
-    left: 0;
+    margin: 0 auto;
+    position: relative;
+    width: 95%;
+  }
+
+  #{$self}__map {
+    height: 100%;
+    left:0;
     position: absolute;
     top: 0;
     width: 100%;
-}
+    z-index: 2;
+  }
 }
