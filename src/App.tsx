@@ -4,11 +4,11 @@ import MapContainer from './components/MapContainer/MapContainer';
 import './App.css'
 import Header from './components/Header/Header';
 
+  const defaultCenter = { lat: 4.710989, lng: -74.07209 };
+
 const App = () => {
 
-    const defaultCenter = { lat: 4.710989, lng: -74.07209 };
     const [center, setCenter] = useState(defaultCenter);
-
 
   return (
     <div className="app">
