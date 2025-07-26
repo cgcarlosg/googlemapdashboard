@@ -3,6 +3,7 @@
 
   height: 100%;
   width: 100%;
+  z-index: 1;
 
   #{$self}__container {
     border: 1px solid #ccc;
@@ -18,5 +19,6 @@
     position: absolute;
     top: 0;
     width: 100%;
+    z-index: 2;
   }
 }

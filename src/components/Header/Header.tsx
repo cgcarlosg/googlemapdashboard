@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Header.scss";
 import type { SearchProps } from "../../types";
 import logo from "../../assets/logoProject.png"
@@ -10,28 +11,55 @@ const mockLocations = [
 ];
 
 const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = mockLocations.find((loc) => loc.name === e.target.value);
+  const [query, setQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+   const filteredLocations = mockLocations.filter(loc =>
+    loc.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+
+  const handleSelect = (locationName: string) => {
+    const selected = mockLocations.find(loc => loc.name === locationName);
     if (selected) {
       onLocationSelect(selected.coords);
+      setQuery(selected.name);
+      setShowSuggestions(false);
     }
   };
 
   return (
     <header className="header">
       <div className="header__brand">
-        <img src={logo} />
+        <img src={logo} alt="Logo" />
       </div>
+
       <div className="header__search">
-        <label htmlFor="location-select">Buscar ubicación:</label>
-        <select id="location-select" onChange={handleChange}>
-          <option value="">Seleccione...</option>
-          {mockLocations.map((loc) => (
-            <option key={loc.name} value={loc.name}>
-              {loc.name}
-            </option>
-          ))}
-        </select>
+        <input
+          id="location-input"
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setShowSuggestions(true);
+          }}
+          placeholder="Escribe una ubicación..."
+          autoComplete="off"
+        />
+
+        {showSuggestions && query && (
+          <ul className="header__search--suggestions">
+            {filteredLocations.length > 0 ? (
+              filteredLocations.map(loc => (
+                <li key={loc.name} onClick={() => handleSelect(loc.name)}>
+                  {loc.name}
+                </li>
+              ))
+            ) : (
+              <li className="no-result">No se encontraron resultados</li>
+            )}
+          </ul>
+        )}
       </div>
     </header>
   );

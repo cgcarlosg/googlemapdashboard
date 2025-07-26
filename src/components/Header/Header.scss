@@ -24,4 +24,30 @@
             width: auto;
         }
     }
+
+     #{$self}__search {
+        align-items: center;
+        box-sizing: border-box;
+        display: flex;
+        height: 100%;
+        max-height: 80%;
+        position: relative;
+        width: 60%;
+        
+        input {
+            height: 100%;
+            padding: 0 2rem;
+            width: 100%;
+        }
+     }
+
+      #{$self}__search--suggestions {
+        background-color: white;
+        left: 0;
+        padding: 1rem;
+        position: absolute;
+        top: 40px;
+        width: 100%;
+        z-index: 3;
+      }
 }
