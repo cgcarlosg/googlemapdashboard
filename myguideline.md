@@ -1,6 +1,6 @@
 ## Header Component
 
-The Header component renders a box that allows the use of [`Automplete`] (https://github.com/visgl/react-google-maps/blob/main/examples/autocomplete/src/autocomplete-control.tsx) in order to select an address and search for it on the map
+The Header component renders a box that allows the use of [`Autocomplete`] (https://github.com/visgl/react-google-maps/blob/main/examples/autocomplete/src/autocomplete-control.tsx) in order to select an address and search for it on the map
 
 [`ExampleAutocomplete search`](https://visgl.github.io/react-google-maps/examples/autocomplete) function ControlPanel
 
@@ -14,11 +14,6 @@ To add markers follow
 [`markers`](https://visgl.github.io/react-google-maps/docs/guides/interacting-with-google-maps-api#refs)
 
 ---
-
-### Features
-
-- Renders a Google Map centered on Bogotá, Colombia.
-- Adds a marker each time the user clicks on the map.
 
 ### Features
 
