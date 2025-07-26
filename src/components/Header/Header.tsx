@@ -1,8 +1,6 @@
 import "./Header.scss";
-
-type Props = {
-  onLocationSelect: (coords: google.maps.LatLngLiteral) => void;
-};
+import type { SearchProps } from "../../types";
+import logo from "../../assets/logoProject.png"
 
 const mockLocations = [
   { name: "Bogotá Centro", coords: {lat: 4.710989, lng: -74.07209 } },
@@ -11,11 +9,30 @@ const mockLocations = [
   { name: "Centro Comercial Plaza Imperial", coords: { lat: 4.7496, lng: -74.0956 } },
 ];
 
-const Header: React.FC<Props> = () => {
+const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = mockLocations.find((loc) => loc.name === e.target.value);
+    if (selected) {
+      onLocationSelect(selected.coords);
+    }
+  };
 
   return (
- <header className="header">
-      
+    <header className="header">
+      <div className="header__brand">
+        <img src={logo} />
+      </div>
+      <div className="header__search">
+        <label htmlFor="location-select">Buscar ubicación:</label>
+        <select id="location-select" onChange={handleChange}>
+          <option value="">Seleccione...</option>
+          {mockLocations.map((loc) => (
+            <option key={loc.name} value={loc.name}>
+              {loc.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </header>
   );
 };

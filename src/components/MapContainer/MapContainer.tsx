@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { MarkerData } from "../../types";
 import {
   APIProvider,
   Map,
@@ -6,14 +7,13 @@ import {
   Pin,
 } from "@vis.gl/react-google-maps";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps";
-import type { MarkerData } from "../../types";
+
 
 import "./MapContainer.scss";
+import type { AppProps } from "../../types";
 
-const center = { lat: 4.710989, lng: -74.07209 };
 
-
-const MapContainer: React.FC = () => {
+const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
 
   const handleMapClick = (event: MapMouseEvent) => {
@@ -40,7 +40,7 @@ const MapContainer: React.FC = () => {
         <div className="mapcontainer__container">
           <Map
             className="mapcontainer__map"
-            defaultCenter={center}
+            center={center}
             defaultZoom={12}
             mapId={import.meta.env.VITE_GOOGLE_MAP_ID}
             onClick={handleMapClick}

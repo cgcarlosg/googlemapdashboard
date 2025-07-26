@@ -1,0 +1,27 @@
+.header {
+    $self: &;
+
+    align-items: center;
+    background-color: #0b304f;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    height: 80px;
+    padding: 0 2rem;
+    width: 100%;
+
+    #{$self}__brand {
+
+        box-sizing: border-box;
+        display: flex;
+        height: 100%;
+        padding: 0.5rem 0;
+        width: 100px;
+
+        img {
+            max-height: 100%;
+            object-fit: contain;
+            width: auto;
+        }
+    }
+}

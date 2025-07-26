@@ -1,15 +1,17 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  overflow-x: hidden;
+  padding: 0;
   text-align: center;
 }
 
 .app {
+  box-sizing: border-box;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 0 1.5rem;
   width: 100vw;
 }

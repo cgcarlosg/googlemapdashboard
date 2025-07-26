@@ -2,6 +2,8 @@
 
 The Header component renders a box that allows the use of [`Automplete`] (https://github.com/visgl/react-google-maps/blob/main/examples/autocomplete/src/autocomplete-control.tsx) in order to select an address and search for it on the map
 
+[`ExampleAutocomplete search`](https://visgl.github.io/react-google-maps/examples/autocomplete) function ControlPanel
+
 ## 🗺️ MapContainer Component
 
 ### Purpose
