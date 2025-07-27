@@ -9,6 +9,8 @@ import {
   type MapMouseEvent,
 } from "@vis.gl/react-google-maps";
 import MapControls from "./MapControls";
+import MapMarkers from "./MapMarkers";
+
 import "./MapContainer.scss";
 import type { AppProps } from "../../types";
 import {
@@ -142,36 +144,14 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
               }
             }}
           >
-            {markers.map((marker) => (
-              <AdvancedMarker
-                key={marker.id}
-                position={marker.position}
-                title={`Marcador en: ${marker.position.lat.toFixed(
-                  4
-                )},  ${marker.position.lng.toFixed(4)}`}
-                onClick={() => {
-                  setMarkers((prev) => prev.filter((m) => m.id !== marker.id));
-                }}
-              >
-                <Pin />
-              </AdvancedMarker>
-            ))}
-            {mostrarHitos &&
-              hitos.map((hito, idx) => (
-                <AdvancedMarker key={`hito-${idx}`} position={hito}>
-                  <Pin background={"#FF0000"} />
-                </AdvancedMarker>
-              ))}
-            {mostrarPuntosInteres &&
-              puntosInteres.map((poi, idx) => (
-                <AdvancedMarker
-                  key={`poi-${idx}`}
-                  position={poi.position}
-                  title={`${poi.tipo}`}
-                >
-                  <Pin background={"#000000"} glyphColor={"#FFFFFF"} />
-                </AdvancedMarker>
-              ))}
+           <MapMarkers
+              markers={markers}
+              setMarkers={setMarkers}
+              hitos={hitos}
+              mostrarHitos={mostrarHitos}
+              puntosInteres={puntosInteres}
+              mostrarPuntosInteres={mostrarPuntosInteres}
+            />
           </Map>
         </div>
       </APIProvider>
