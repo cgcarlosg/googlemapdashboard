@@ -4,8 +4,6 @@ import { mockLocations } from "../../data/MockLocations";
 import {
   APIProvider,
   Map,
-  AdvancedMarker,
-  Pin,
   type MapMouseEvent,
 } from "@vis.gl/react-google-maps";
 import MapControls from "./MapControls";
