@@ -4,8 +4,6 @@ import { mockLocations } from "../../data/MockLocations";
 import {
   APIProvider,
   Map,
-  AdvancedMarker,
-  Pin,
   type MapMouseEvent,
 } from "@vis.gl/react-google-maps";
 import MapControls from "./MapControls";
@@ -31,6 +29,7 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [mostrarHitos, setMostrarHitos] = useState(true);
   const [mostrarCirculos, setMostrarCirculos] = useState(true);
   const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
+  const [hitoActivo, setHitoActivo] = useState<number | null>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -154,6 +153,8 @@ useEffect(() => {
               mostrarHitos={mostrarHitos}
               puntosInteres={puntosInteres}
               mostrarPuntosInteres={mostrarPuntosInteres}
+              hitoActivo={hitoActivo}
+              setHitoActivo={setHitoActivo}
             />
           </Map>
         </div>
