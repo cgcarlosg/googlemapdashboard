@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { MarkerData } from "../../types";
+import type { MarkerData, PoiData, MapContainerProps } from "../../types";
 import { mockLocations } from "../../data/MockLocations";
 import {
   APIProvider,
@@ -10,13 +10,12 @@ import MapControls from "./MapControls";
 import MapMarkers from "./MapMarkers";
 
 import "./MapContainer.scss";
-import type { AppProps } from "../../types";
 import {
   interpolatePoints,
   generarPuntoAleatorioEnCirculo,
 } from "../../utils/mapUtils";
 
-const MapContainer: React.FC<AppProps> = ({ center }) => {
+const MapContainer: React.FC<MapContainerProps> = ({ center, onHitosChange, onPuntosInteresChange }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
   const rutaRef = useRef<google.maps.Polyline | null>(null);
@@ -45,11 +44,29 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
 
         const puntos = interpolatePoints(path, 1000);
         setHitos(puntos);
+        onHitosChange(puntos);
       }
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, []);
+  }, [onHitosChange]);
+
+ useEffect(() => {
+    if (!mapRef.current || hitos.length === 0) return;
+
+    const tipos = ["Parque", "Restaurante", "Tienda"];
+    const nuevosPOI: PoiData[] = [];
+
+    hitos.forEach((punto) => {
+      for (let i = 0; i < 2; i++) {
+        const pos = generarPuntoAleatorioEnCirculo(punto, 450);
+        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+        nuevosPOI.push({ position: pos, tipo });
+      }
+    });
+    setPuntosInteres(nuevosPOI);
+    onPuntosInteresChange(nuevosPOI);
+  }, [hitos, onPuntosInteresChange]);
 
   useEffect(() => {
     if (

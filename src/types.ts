@@ -7,9 +7,11 @@ export type MarkerData = {
   position: google.maps.LatLngLiteral;
 };
 
-export type AppProps = {
+export interface MapContainerProps {
   center: google.maps.LatLngLiteral;
-};
+  onHitosChange: (hitos: HitosData[]) => void;
+  onPuntosInteresChange: (pois: PoiData[]) => void;
+}
 
 export interface MapControlsProps {
   mostrarHitos: boolean;
@@ -30,3 +32,12 @@ export interface MarkerProps {
   hitoActivo: number | null;
   setHitoActivo: React.Dispatch<React.SetStateAction<number | null>>; 
 }
+
+export interface SidebarProps { 
+  puntosInteres: PoiData[];
+  hitos: HitosData[];
+}
+
+export type PoiData = { position: google.maps.LatLngLiteral; tipo: string };
+
+export type HitosData = google.maps.LatLngLiteral;
