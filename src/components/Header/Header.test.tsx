@@ -26,10 +26,10 @@ describe("Header", () => {
     render(<Header onLocationSelect={mockOnLocationSelect} />);
     const input = screen.getByTestId("location-input");
 
-    fireEvent.change(input, { target: { value: "Aeropuerto" } });
-    const suggestion = screen.getByText("Bogotá Aeropuerto");
+    fireEvent.change(input, { target: { value: "Centro" } });
+    const suggestion = screen.getByText("Centro PriceSmart");
 
     fireEvent.click(suggestion);
-    expect(mockOnLocationSelect).toHaveBeenCalledWith({ lat: 4.7010, lng: -74.1464 });
+    expect(mockOnLocationSelect).toHaveBeenCalledWith({ lat: 4.7468, lng: -74.0252 });
   });
 });
