@@ -19,3 +19,14 @@ export interface MapControlsProps {
   mostrarPuntosInteres: boolean;
   setMostrarPuntosInteres: (value: boolean) => void;
 }
+
+export interface MarkerProps {
+  markers: MarkerData[];
+  setMarkers: React.Dispatch<React.SetStateAction<MarkerData[]>>;
+  hitos: google.maps.LatLngLiteral[];
+  mostrarHitos: boolean;
+  puntosInteres: { position: google.maps.LatLngLiteral; tipo: string }[];
+  mostrarPuntosInteres: boolean;
+  hitoActivo: number | null;
+  setHitoActivo: React.Dispatch<React.SetStateAction<number | null>>; 
+}

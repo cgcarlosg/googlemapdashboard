@@ -1,20 +1,10 @@
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
-import type { MarkerData } from "../../types";
-import './MapContainer.scss'
+import { useMapsLibrary } from "@vis.gl/react-google-maps";
+import type { MarkerProps } from "../../types";
+import "./MapContainer.scss";
 
-interface Props {
-  markers: MarkerData[];
-  setMarkers: React.Dispatch<React.SetStateAction<MarkerData[]>>;
-  hitos: google.maps.LatLngLiteral[];
-  mostrarHitos: boolean;
-  puntosInteres: { position: google.maps.LatLngLiteral; tipo: string }[];
-  mostrarPuntosInteres: boolean;
-  hitoActivo: number | null;
-  setHitoActivo: React.Dispatch<React.SetStateAction<number | null>>; 
-}
-
-const MapMarkers: React.FC<Props> = ({
+const MapMarkers: React.FC<MarkerProps> = ({
   markers,
   setMarkers,
   hitos,
@@ -22,15 +12,50 @@ const MapMarkers: React.FC<Props> = ({
   puntosInteres,
   mostrarPuntosInteres,
   hitoActivo,
-  setHitoActivo
+  setHitoActivo,
 }) => {
+  const streetViewLib = useMapsLibrary("streetView");
+   const streetViewContainer = useRef<HTMLDivElement>(null);
+  
+ const initializeStreetView = useCallback((node: HTMLDivElement | null) => {
+
+    if (node === null || streetViewLib === null) {
+      return;
+    }
+    
+    streetViewContainer.current = node;
+
+    if (hitoActivo !== null && hitos[hitoActivo] && streetViewContainer.current && typeof window !== "undefined") {
+      const position = hitos[hitoActivo];
+      const streetViewService = new window.google.maps.StreetViewService();
+      
+      streetViewService.getPanorama({ location: position, radius: 50 }, (data, status) => {
+        if (status === "OK" && data && data.location) {
+          new window.google.maps.StreetViewPanorama(streetViewContainer.current!, {
+            position: data.location.latLng,
+            pov: { heading: 0, pitch: 0 },
+            zoom: 1,
+            visible: true,
+          });
+        } else {
+          console.error("Street View no disponible para esta ubicación.");
+          if (streetViewContainer.current) {
+            streetViewContainer.current.innerHTML = "<div style='padding: 10px; color: #888;'>Street View no disponible.</div>";
+          }
+        }
+      });
+    }
+  }, [hitoActivo, streetViewLib, hitos]);
+
   return (
     <>
       {markers.map((marker) => (
         <AdvancedMarker
           key={marker.id}
           position={marker.position}
-          title={`Marcador en: ${marker.position.lat.toFixed(4)}, ${marker.position.lng.toFixed(4)}`}
+          title={`Marcador en: ${marker.position.lat.toFixed(
+            4
+          )}, ${marker.position.lng.toFixed(4)}`}
           onClick={() =>
             setMarkers((prev) => prev.filter((m) => m.id !== marker.id))
           }
@@ -39,30 +64,46 @@ const MapMarkers: React.FC<Props> = ({
         </AdvancedMarker>
       ))}
 
-{mostrarHitos &&
-  hitos.map((hito, idx) => (
-    <React.Fragment key={`hito-${idx}`}>
-      <AdvancedMarker
-        position={hito}
-        onClick={() => setHitoActivo(idx)}
-      >
-        <Pin background="#FF0000" />
-      </AdvancedMarker>
+       {mostrarHitos &&
+        hitos.map((hito, idx) => (
+          <React.Fragment key={`hito-${idx}`}>
+            <AdvancedMarker
+              position={hito}
+              onClick={() => setHitoActivo(idx)}
+            >
+              <Pin background="#FF0000" />
+            </AdvancedMarker>
 
-      {hitoActivo === idx && (
-        <InfoWindow
-          position={hito}
-          onCloseClick={() => setHitoActivo(null)}
-        >
-          <div>
-            <h3>Hito {idx + 1}</h3>
-            <p><strong>Tipo:</strong> Punto de referencia</p>
-            <p><strong>Flujo estimado:</strong> {100 + idx * 20} personas/hora</p>
-          </div>
-        </InfoWindow>
-      )}
-    </React.Fragment>
-))}
+            {hitoActivo === idx && (
+              <InfoWindow
+                position={hito}
+                onCloseClick={() => setHitoActivo(null)}
+              >
+                <div>
+                  <h3>Hito {idx + 1}</h3>
+                  <p>
+                    <strong>Tipo:</strong> Punto de referencia
+                  </p>
+                  <p>
+                    <strong>Flujo estimado:</strong> {100 + idx * 20}{" "}
+                    personas/hora
+                  </p>
+                  
+                  <div
+                    ref={initializeStreetView} 
+                    style={{
+                      width: "300px",
+                      height: "150px",
+                      marginTop: "10px",
+                      borderRadius: "4px",
+                      overflow: "hidden",
+                    }}
+                  />
+                </div>
+              </InfoWindow>
+            )}
+          </React.Fragment>
+        ))}
 
 
       {mostrarPuntosInteres &&
