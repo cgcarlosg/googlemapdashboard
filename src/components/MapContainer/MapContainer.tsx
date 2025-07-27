@@ -20,9 +20,11 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [puntosInteres, setPuntosInteres] = useState<
     { position: google.maps.LatLngLiteral; tipo: string }[]
   >([]);
-
   const lastCenter = useRef(center);
   const circulosRef = useRef<google.maps.Circle[]>([]);
+  const [mostrarHitos, setMostrarHitos] = useState(true);
+  const [mostrarCirculos, setMostrarCirculos] = useState(true);
+  const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
 
   function interpolatePoints(
     path: google.maps.LatLngLiteral[],
@@ -145,6 +147,7 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     circulosRef.current.forEach((c) => c.setMap(null));
     circulosRef.current = [];
 
+     if (mostrarCirculos) {
     hitos.forEach((punto) => {
       const circulo = new google.maps.Circle({
         map: mapRef.current!,
@@ -159,6 +162,8 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
 
       circulosRef.current.push(circulo);
     });
+  }
+    
 
     hitos.forEach((punto) => {
       for (let i = 0; i < 2; i++) {
@@ -169,12 +174,39 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
 
       setPuntosInteres(nuevosPOI);
     });
-  }, [hitos]);
+  }, [hitos, mostrarCirculos]);
 
   return (
     <div className="mapcontainer">
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <div className="mapcontainer__container">
+          <div className="mapcontainer__controls">
+            <label>
+              <input
+                type="checkbox"
+                checked={mostrarHitos}
+                onChange={(e) => setMostrarHitos(e.target.checked)}
+              />
+              Mostrar Hitos
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={mostrarCirculos}
+                onChange={(e) => setMostrarCirculos(e.target.checked)}
+              />
+              Mostrar Círculos
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={mostrarPuntosInteres}
+                onChange={(e) => setMostrarPuntosInteres(e.target.checked)}
+              />
+              Mostrar Puntos de Interés
+            </label>
+          </div>
+
           <Map
             className="mapcontainer__map"
             defaultCenter={center}
@@ -203,12 +235,12 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
                 <Pin />
               </AdvancedMarker>
             ))}
-            {hitos.map((hito, idx) => (
+            {mostrarHitos && hitos.map((hito, idx) => (
               <AdvancedMarker key={`hito-${idx}`} position={hito}>
                 <Pin background={"#FF0000"} />
               </AdvancedMarker>
             ))}
-            {puntosInteres.map((poi, idx) => (
+            { mostrarPuntosInteres && puntosInteres.map((poi, idx) => (
               <AdvancedMarker
                 key={`poi-${idx}`}
                 position={poi.position}

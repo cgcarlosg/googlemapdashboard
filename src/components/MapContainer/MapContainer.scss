@@ -10,15 +10,57 @@
     height: 100%;
     margin: 0 auto;
     position: relative;
-    width: 95%;
+    width: 100%;
+  }
+
+  #{$self}__controls {
+    align-items: flex-start;
+    background-color: #002b5b;
+    box-sizing: border-box;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 15%;
+    justify-content: center;
+    margin-top: -3px;
+    max-height: 15%;
+    padding: 20px ;
+
+    @media (min-width: 768px) {
+        align-items: center;
+        flex-direction: row;
+         height: 10%;
+         justify-content: space-around;
+         max-height: 10%;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      gap: 6px;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        accent-color: #f5f5f5;
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
 
   #{$self}__map {
-    height: 100%;
-    left:0;
+    height: 85%;
+    left: 0;
     position: absolute;
-    top: 0;
+    top: 15%;
     width: 100%;
     z-index: 2;
+
+      @media (min-width: 768px) {
+        height: 90%;
+        top: 10%;
+      }
   }
 }
