@@ -6,7 +6,15 @@ import Header from './components/Header/Header';
 
 const defaultCenter = { lat: 4.710989, lng: -74.07209 };
 const saved = localStorage.getItem("last-center");
-const initialCenter = saved ? JSON.parse(saved) : defaultCenter;
+const initialCenter = (() => {
+  if (!saved) return defaultCenter;
+  try {
+    return JSON.parse(saved);
+  } catch (e) {
+    console.warn("Failed to parse 'last-center' from localStorage, using default.", e);
+    return defaultCenter;
+  }
+})();
 
 const App = () => {
 

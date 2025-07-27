@@ -79,43 +79,46 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     setMarkers((prev) => [...prev, newMarker]);
   };
 
-  useEffect(() => {
-    const tipos = ["Parque", "Restaurante", "Tienda"];
-    const nuevosPOI: { position: google.maps.LatLngLiteral; tipo: string }[] =
-      [];
+useEffect(() => {
+  if (!mapRef.current || hitos.length === 0) return;
 
-    if (!mapRef.current || hitos.length === 0) return;
+  circulosRef.current.forEach((c) => c.setMap(null));
+  circulosRef.current = [];
 
-    circulosRef.current.forEach((c) => c.setMap(null));
-    circulosRef.current = [];
-
-    if (mostrarCirculos) {
-      hitos.forEach((punto) => {
-        const circulo = new google.maps.Circle({
-          map: mapRef.current!,
-          center: punto,
-          radius: 450,
-          strokeColor: "#ff008cff",
-          strokeOpacity: 0.6,
-          strokeWeight: 1,
-          fillColor: "#ff008cff",
-          fillOpacity: 0.2,
-        });
-
-        circulosRef.current.push(circulo);
-      });
-    }
-
+  if (mostrarCirculos) {
     hitos.forEach((punto) => {
-      for (let i = 0; i < 2; i++) {
-        const pos = generarPuntoAleatorioEnCirculo(punto, 450);
-        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-        nuevosPOI.push({ position: pos, tipo });
-      }
+      const circulo = new google.maps.Circle({
+        map: mapRef.current!,
+        center: punto,
+        radius: 450,
+        strokeColor: "#ff008cff",
+        strokeOpacity: 0.6,
+        strokeWeight: 1,
+        fillColor: "#ff008cff",
+        fillOpacity: 0.2,
+      });
 
-      setPuntosInteres(nuevosPOI);
+      circulosRef.current.push(circulo);
     });
-  }, [hitos, mostrarCirculos]);
+  }
+}, [hitos, mostrarCirculos]);
+
+useEffect(() => {
+  if (!mapRef.current || hitos.length === 0) return;
+
+  const tipos = ["Parque", "Restaurante", "Tienda"];
+  const nuevosPOI: { position: google.maps.LatLngLiteral; tipo: string }[] = [];
+
+  hitos.forEach((punto) => {
+    for (let i = 0; i < 2; i++) {
+      const pos = generarPuntoAleatorioEnCirculo(punto, 450);
+      const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+      nuevosPOI.push({ position: pos, tipo });
+    }
+  });
+
+  setPuntosInteres(nuevosPOI);
+}, [hitos]);
 
   return (
     <div className="mapcontainer">

@@ -18,7 +18,7 @@ vi.mock("@vis.gl/react-google-maps", () => ({
 const center: AppProps["center"] = { lat: 10, lng: 10 };
 
 describe("MapContainer", () => {
-  it("renderiza los controles y el mapa", () => {
+  it("renders the controls and the map", () => {
     render(<MapContainer center={center} />);
     
     expect(screen.getByLabelText("Mostrar Hitos")).toBeInTheDocument();
@@ -26,9 +26,27 @@ describe("MapContainer", () => {
     expect(screen.getByLabelText("Mostrar Puntos de Interés")).toBeInTheDocument();
   });
 
-  it("permite activar/desactivar los hitos", () => {
+  it("allows toggling landmarks on and off", () => {
     render(<MapContainer center={center} />);
     const checkbox = screen.getByLabelText("Mostrar Hitos") as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(true);
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBe(false);
+  });
+
+  it("allows toggling circles on and off", () => {
+    render(<MapContainer center={center} />);
+    const checkbox = screen.getByLabelText("Mostrar Círculos") as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(true);
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBe(false);
+  });
+
+  it("allows toggling points of interest on and off", () => {
+    render(<MapContainer center={center} />);
+    const checkbox = screen.getByLabelText("Mostrar Puntos de Interés") as HTMLInputElement;
 
     expect(checkbox.checked).toBe(true);
     fireEvent.click(checkbox);

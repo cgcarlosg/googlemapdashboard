@@ -45,11 +45,12 @@ export function generarPuntoAleatorioEnCirculo(
 
   const distancia = radioMetros * Math.sqrt(x);
   const angulo = 2 * Math.PI * y;
+  const METERS_PER_DEGREE_AT_EQUATOR = 111320;
 
   const deltaLat = (distancia * Math.cos(angulo)) / 111320;
   const deltaLng =
     (distancia * Math.sin(angulo)) /
-    (111320 * Math.cos((centro.lat * Math.PI) / 180));
+    (METERS_PER_DEGREE_AT_EQUATOR * Math.cos((centro.lat * Math.PI) / 180));
 
   return {
     lat: centro.lat + deltaLat,

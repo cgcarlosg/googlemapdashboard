@@ -13,7 +13,7 @@ The `MapContainer` component renders a Google Map using the [`@vis.gl/react-goog
 To add markers follow
 [`markers`](https://visgl.github.io/react-google-maps/docs/guides/interacting-with-google-maps-api#refs)
 
-To add specifi route in map is used [`Polyline component`](https://github.com/visgl/react-google-maps/blob/776663c9ff21ba2b6c59f876f2a3cbec7f5e95cd/examples/drawing/src/types.ts#L69). It is well explain in this section of the [`documentation`](https://developers.google.com/maps/documentation/javascript/examples/polyline-simple?hl=en)
+To add specific route in the map the [`Polyline component`](https://github.com/visgl/react-google-maps/blob/776663c9ff21ba2b6c59f876f2a3cbec7f5e95cd/examples/drawing/src/types.ts#L69) is used. This is well explained in this section of the [`documentation`](https://developers.google.com/maps/documentation/javascript/examples/polyline-simple?hl=en)
 
 ---
 
