@@ -11,6 +11,7 @@ export interface MapContainerProps {
   center: google.maps.LatLngLiteral;
   onHitosChange: (hitos: HitosData[]) => void;
   onPuntosInteresChange: (pois: PoiData[]) => void;
+  onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
 }
 
 export interface MapControlsProps {
@@ -36,8 +37,22 @@ export interface MarkerProps {
 export interface SidebarProps { 
   puntosInteres: PoiData[];
   hitos: HitosData[];
+  ageGroupData: AgeGroupData;
+  socioeconomicData: SocioeconomicData; 
 }
 
 export type PoiData = { position: google.maps.LatLngLiteral; tipo: string };
 
 export type HitosData = google.maps.LatLngLiteral;
+
+export type AgeGroupData = {
+  name: string;
+  value: number;
+  color: string;
+}[];
+
+export type SocioeconomicData = {
+  name: string;
+  value: number;
+  color: string;
+}[];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import type { MarkerData, PoiData, MapContainerProps } from "../../types";
+import type { MarkerData, PoiData, MapContainerProps, AgeGroupData, SocioeconomicData } from "../../types";
 import { mockLocations } from "../../data/MockLocations";
 import {
   APIProvider,
@@ -15,7 +15,7 @@ import {
   generarPuntoAleatorioEnCirculo,
 } from "../../utils/mapUtils";
 
-const MapContainer: React.FC<MapContainerProps> = ({ center, onHitosChange, onPuntosInteresChange }) => {
+const MapContainer: React.FC<MapContainerProps> = ({ center, onHitosChange, onPuntosInteresChange, onDemographicsChange }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
   const rutaRef = useRef<google.maps.Polyline | null>(null);
@@ -66,7 +66,25 @@ const MapContainer: React.FC<MapContainerProps> = ({ center, onHitosChange, onPu
     });
     setPuntosInteres(nuevosPOI);
     onPuntosInteresChange(nuevosPOI);
-  }, [hitos, onPuntosInteresChange]);
+
+if (onDemographicsChange) {
+      const newAgeData: AgeGroupData = [
+        { name: '0-17 años', value: Math.floor(Math.random() * 100) + 20, color: '#8884d8' },
+        { name: '18-35 años', value: Math.floor(Math.random() * 100) + 80, color: '#82ca9d' },
+        { name: '36-55 años', value: Math.floor(Math.random() * 100) + 50, color: '#ffc658' },
+        { name: '56+ años', value: Math.floor(Math.random() * 50) + 10, color: '#ff7300' },
+      ];
+      const newSocioData: SocioeconomicData = [
+        { name: 'Clase A', value: Math.floor(Math.random() * 30) + 10, color: '#0088FE' },
+        { name: 'Clase B', value: Math.floor(Math.random() * 60) + 30, color: '#00C49F' },
+        { name: 'Clase C', value: Math.floor(Math.random() * 80) + 50, color: '#FFBB28' },
+        { name: 'Clase D', value: Math.floor(Math.random() * 40) + 20, color: '#FF8042' },
+        { name: 'Clase E', value: Math.floor(Math.random() * 20) + 5, color: '#AF19FF' },
+      ];
+      onDemographicsChange(newAgeData, newSocioData);
+    }
+
+  }, [hitos, onPuntosInteresChange, onDemographicsChange]);
 
   useEffect(() => {
     if (
