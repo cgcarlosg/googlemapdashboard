@@ -17,6 +17,9 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
   const mapRef = useRef<google.maps.Map | null>(null);
   const rutaRef = useRef<google.maps.Polyline | null>(null);
   const [hitos, setHitos] = useState<google.maps.LatLngLiteral[]>([]);
+  const [puntosInteres, setPuntosInteres] = useState<
+    { position: google.maps.LatLngLiteral; tipo: string }[]
+  >([]);
 
   const lastCenter = useRef(center);
   const circulosRef = useRef<google.maps.Circle[]>([]);
@@ -62,6 +65,27 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     }
 
     return result;
+  }
+
+  function generarPuntoAleatorioEnCirculo(
+    centro: google.maps.LatLngLiteral,
+    radioMetros: number
+  ): google.maps.LatLngLiteral {
+    const y = Math.random();
+    const x = Math.random();
+
+    const distancia = radioMetros * Math.sqrt(x);
+    const angulo = 2 * Math.PI * y;
+
+    const deltaLat = (distancia * Math.cos(angulo)) / 111320;
+    const deltaLng =
+      (distancia * Math.sin(angulo)) /
+      (111320 * Math.cos((centro.lat * Math.PI) / 180));
+
+    return {
+      lat: centro.lat + deltaLat,
+      lng: centro.lng + deltaLng,
+    };
   }
 
   useEffect(() => {
@@ -110,29 +134,42 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
 
     setMarkers((prev) => [...prev, newMarker]);
   };
-  
+
   useEffect(() => {
-  if (!mapRef.current || hitos.length === 0) return;
+    const tipos = ["Parque", "Restaurante", "Tienda"];
+    const nuevosPOI: { position: google.maps.LatLngLiteral; tipo: string }[] =
+      [];
 
-  circulosRef.current.forEach((c) => c.setMap(null));
-  circulosRef.current = [];
+    if (!mapRef.current || hitos.length === 0) return;
 
-  hitos.forEach((punto) => {
-    const circulo = new google.maps.Circle({
-      map: mapRef.current!,
-      center: punto,
-      radius: 250,
-      strokeColor: "#ff008cff",
-      strokeOpacity: 0.6,
-      strokeWeight: 1,
-      fillColor: "#ff008cff",
-      fillOpacity: 0.2,
+    circulosRef.current.forEach((c) => c.setMap(null));
+    circulosRef.current = [];
+
+    hitos.forEach((punto) => {
+      const circulo = new google.maps.Circle({
+        map: mapRef.current!,
+        center: punto,
+        radius: 450,
+        strokeColor: "#ff008cff",
+        strokeOpacity: 0.6,
+        strokeWeight: 1,
+        fillColor: "#ff008cff",
+        fillOpacity: 0.2,
+      });
+
+      circulosRef.current.push(circulo);
     });
 
-    circulosRef.current.push(circulo);
-  });
-}, [hitos]);
+    hitos.forEach((punto) => {
+      for (let i = 0; i < 2; i++) {
+        const pos = generarPuntoAleatorioEnCirculo(punto, 450);
+        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+        nuevosPOI.push({ position: pos, tipo });
+      }
 
+      setPuntosInteres(nuevosPOI);
+    });
+  }, [hitos]);
 
   return (
     <div className="mapcontainer">
@@ -169,6 +206,15 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
             {hitos.map((hito, idx) => (
               <AdvancedMarker key={`hito-${idx}`} position={hito}>
                 <Pin background={"#FF0000"} />
+              </AdvancedMarker>
+            ))}
+            {puntosInteres.map((poi, idx) => (
+              <AdvancedMarker
+                key={`poi-${idx}`}
+                position={poi.position}
+                title={`${poi.tipo}`}
+              >
+                <Pin background={"#000000"} glyphColor={"#FFFFFF"} />
               </AdvancedMarker>
             ))}
           </Map>
