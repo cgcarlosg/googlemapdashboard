@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import MapContainer from "./MapContainer";
 import type { AppProps } from "../../types";
+
 vi.mock("@vis.gl/react-google-maps", () => ({
   APIProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   Map: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -12,8 +13,10 @@ vi.mock("@vis.gl/react-google-maps", () => ({
   Circle: ({ radius }: { radius: number }) => (
     <div data-testid="circle" data-radius={radius} />
   ),
+  InfoWindow: () => <div data-testid="info-window-mock" />,
+  Pin: () => <div data-testid="pin" />,
+  useMapsLibrary: () => ({}),
 }));
-
 
 const center: AppProps["center"] = { lat: 10, lng: 10 };
 

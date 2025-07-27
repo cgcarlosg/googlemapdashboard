@@ -15,37 +15,51 @@ const MapMarkers: React.FC<MarkerProps> = ({
   setHitoActivo,
 }) => {
   const streetViewLib = useMapsLibrary("streetView");
-   const streetViewContainer = useRef<HTMLDivElement>(null);
-  
- const initializeStreetView = useCallback((node: HTMLDivElement | null) => {
+  const streetViewContainer = useRef<HTMLDivElement>(null);
 
-    if (node === null || streetViewLib === null) {
-      return;
-    }
-    
-    streetViewContainer.current = node;
+  const initializeStreetView = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node === null || streetViewLib === null) {
+        return;
+      }
 
-    if (hitoActivo !== null && hitos[hitoActivo] && streetViewContainer.current && typeof window !== "undefined") {
-      const position = hitos[hitoActivo];
-      const streetViewService = new window.google.maps.StreetViewService();
-      
-      streetViewService.getPanorama({ location: position, radius: 50 }, (data, status) => {
-        if (status === "OK" && data && data.location) {
-          new window.google.maps.StreetViewPanorama(streetViewContainer.current!, {
-            position: data.location.latLng,
-            pov: { heading: 0, pitch: 0 },
-            zoom: 1,
-            visible: true,
-          });
-        } else {
-          console.error("Street View no disponible para esta ubicación.");
-          if (streetViewContainer.current) {
-            streetViewContainer.current.innerHTML = "<div style='padding: 10px; color: #888;'>Street View no disponible.</div>";
+      streetViewContainer.current = node;
+
+      if (
+        hitoActivo !== null &&
+        hitos[hitoActivo] &&
+        streetViewContainer.current &&
+        typeof window !== "undefined"
+      ) {
+        const position = hitos[hitoActivo];
+        const streetViewService = new window.google.maps.StreetViewService();
+
+        streetViewService.getPanorama(
+          { location: position, radius: 50 },
+          (data, status) => {
+            if (status === "OK" && data && data.location) {
+              new window.google.maps.StreetViewPanorama(
+                streetViewContainer.current!,
+                {
+                  position: data.location.latLng,
+                  pov: { heading: 0, pitch: 0 },
+                  zoom: 1,
+                  visible: true,
+                }
+              );
+            } else {
+              console.error("Street View no disponible para esta ubicación.");
+              if (streetViewContainer.current) {
+                streetViewContainer.current.innerHTML =
+                  "<div style='padding: 10px; color: #888;'>Street View no disponible.</div>";
+              }
+            }
           }
-        }
-      });
-    }
-  }, [hitoActivo, streetViewLib, hitos]);
+        );
+      }
+    },
+    [hitoActivo, streetViewLib, hitos]
+  );
 
   return (
     <>
@@ -64,13 +78,10 @@ const MapMarkers: React.FC<MarkerProps> = ({
         </AdvancedMarker>
       ))}
 
-       {mostrarHitos &&
+      {mostrarHitos &&
         hitos.map((hito, idx) => (
           <React.Fragment key={`hito-${idx}`}>
-            <AdvancedMarker
-              position={hito}
-              onClick={() => setHitoActivo(idx)}
-            >
+            <AdvancedMarker position={hito} onClick={() => setHitoActivo(idx)}>
               <Pin background="#FF0000" />
             </AdvancedMarker>
 
@@ -88,9 +99,9 @@ const MapMarkers: React.FC<MarkerProps> = ({
                     <strong>Flujo estimado:</strong> {100 + idx * 20}{" "}
                     personas/hora
                   </p>
-                  
+
                   <div
-                    ref={initializeStreetView} 
+                    ref={initializeStreetView}
                     style={{
                       width: "300px",
                       height: "150px",
@@ -104,7 +115,6 @@ const MapMarkers: React.FC<MarkerProps> = ({
             )}
           </React.Fragment>
         ))}
-
 
       {mostrarPuntosInteres &&
         puntosInteres.map((poi, idx) => (
