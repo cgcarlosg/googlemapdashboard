@@ -19,12 +19,13 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [hitos, setHitos] = useState<google.maps.LatLngLiteral[]>([]);
 
   const lastCenter = useRef(center);
+  const circulosRef = useRef<google.maps.Circle[]>([]);
 
   function interpolatePoints(
     path: google.maps.LatLngLiteral[],
     stepMeters = 1000
   ): google.maps.LatLngLiteral[] {
-    const earthRadius = 6371000; // metros
+    const earthRadius = 6371000;
 
     const toRad = (deg: number) => (deg * Math.PI) / 180;
 
@@ -109,6 +110,29 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
 
     setMarkers((prev) => [...prev, newMarker]);
   };
+  
+  useEffect(() => {
+  if (!mapRef.current || hitos.length === 0) return;
+
+  circulosRef.current.forEach((c) => c.setMap(null));
+  circulosRef.current = [];
+
+  hitos.forEach((punto) => {
+    const circulo = new google.maps.Circle({
+      map: mapRef.current!,
+      center: punto,
+      radius: 250,
+      strokeColor: "#ff008cff",
+      strokeOpacity: 0.6,
+      strokeWeight: 1,
+      fillColor: "#ff008cff",
+      fillOpacity: 0.2,
+    });
+
+    circulosRef.current.push(circulo);
+  });
+}, [hitos]);
+
 
   return (
     <div className="mapcontainer">
@@ -117,7 +141,7 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
           <Map
             className="mapcontainer__map"
             defaultCenter={center}
-            defaultZoom={13}
+            defaultZoom={14}
             mapId={import.meta.env.VITE_GOOGLE_MAP_ID}
             onClick={handleMapClick}
             gestureHandling="greedy"
