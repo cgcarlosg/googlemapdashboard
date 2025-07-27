@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { MarkerData } from "../../types";
+import { mockLocations } from "../../data/MockLocations";
 import {
   APIProvider,
   Map,
@@ -14,8 +15,73 @@ import type { AppProps } from "../../types";
 const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const rutaRef = useRef<google.maps.Polyline | null>(null);
+  const [hitos, setHitos] = useState<google.maps.LatLngLiteral[]>([]);
 
   const lastCenter = useRef(center);
+
+  function interpolatePoints(
+    path: google.maps.LatLngLiteral[],
+    stepMeters = 1000
+  ): google.maps.LatLngLiteral[] {
+    const earthRadius = 6371000; // metros
+
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+    const result: google.maps.LatLngLiteral[] = [];
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const p1 = path[i];
+      const p2 = path[i + 1];
+
+      const lat1 = toRad(p1.lat);
+      const lon1 = toRad(p1.lng);
+      const lat2 = toRad(p2.lat);
+      const lon2 = toRad(p2.lng);
+
+      const dLat = lat2 - lat1;
+      const dLon = lon2 - lon1;
+
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = earthRadius * c;
+
+      const steps = Math.floor(distance / stepMeters);
+
+      for (let j = 1; j <= steps; j++) {
+        const f = j / steps;
+
+        const lat = p1.lat + (p2.lat - p1.lat) * f;
+        const lng = p1.lng + (p2.lng - p1.lng) * f;
+
+        result.push({ lat, lng });
+      }
+    }
+
+    return result;
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (mapRef.current && !rutaRef.current) {
+        const path = mockLocations.map((loc) => loc.coords);
+        rutaRef.current = new google.maps.Polyline({
+          path,
+          map: mapRef.current,
+          strokeColor: "#0000FF",
+          strokeOpacity: 1.0,
+          strokeWeight: 4,
+        });
+
+        const puntos = interpolatePoints(path, 1000);
+        setHitos(puntos);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     if (
@@ -42,8 +108,6 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     };
 
     setMarkers((prev) => [...prev, newMarker]);
-    console.log("previo marcador:", markers);
-    console.log("Nuevo marcador:", newMarker);
   };
 
   return (
@@ -53,7 +117,7 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
           <Map
             className="mapcontainer__map"
             defaultCenter={center}
-            defaultZoom={12}
+            defaultZoom={13}
             mapId={import.meta.env.VITE_GOOGLE_MAP_ID}
             onClick={handleMapClick}
             gestureHandling="greedy"
@@ -76,6 +140,11 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
                 }}
               >
                 <Pin />
+              </AdvancedMarker>
+            ))}
+            {hitos.map((hito, idx) => (
+              <AdvancedMarker key={`hito-${idx}`} position={hito}>
+                <Pin background={"#FF0000"} />
               </AdvancedMarker>
             ))}
           </Map>
