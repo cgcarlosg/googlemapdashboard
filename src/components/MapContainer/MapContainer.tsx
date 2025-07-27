@@ -31,8 +31,6 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
   const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
   const [hitoActivo, setHitoActivo] = useState<number | null>(null);
 
-
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (mapRef.current && !rutaRef.current) {

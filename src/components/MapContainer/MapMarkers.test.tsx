@@ -59,19 +59,19 @@ describe("MapMarkers", () => {
     expect(mockMarkerProps.setMarkers).toHaveBeenCalledTimes(1);
   });
 
-  it("renders milestones and opens InfoWindow on click", () => {
+ it("renders milestones and opens InfoWindow on click", () => {
     mockStreetViewService.getPanorama.mockImplementation((_, callback) => {
       callback({ location: { latLng: { lat: 20, lng: 20 } } }, "OK");
     });
     
-    const { getAllByTestId } = render(<MapMarkers {...mockMarkerProps} />);
+    const { getAllByTestId, getByTestId, getByText, rerender } = render(<MapMarkers {...mockMarkerProps} />);
     
     const hitoButtons = getAllByTestId("advanced-marker");
     fireEvent.click(hitoButtons[1]);
     
     expect(mockMarkerProps.setHitoActivo).toHaveBeenCalledWith(0);
     
-    const { getByTestId, getByText } = render(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
+    rerender(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
 
     expect(getByTestId("info-window-mock")).toBeInTheDocument();
     expect(getByText("Hito 1")).toBeInTheDocument();
@@ -89,19 +89,22 @@ describe("MapMarkers", () => {
       callback(null, "ZERO_RESULTS");
     });
     
-    render(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
+    const { getByTestId, getByText } = render(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
     
-    expect(screen.getByTestId("info-window-mock")).toBeInTheDocument();
-
-    expect(screen.getByText("Street View no disponible.")).toBeInTheDocument();
+    expect(getByTestId("info-window-mock")).toBeInTheDocument();
+    expect(getByText("Street View no disponible.")).toBeInTheDocument();
   });
 
   it("closes the InfoWindow on close button click", () => {
-    render(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
-    const closeButton = screen.getByTestId("close-info-window-btn");
+    const { getByTestId, rerender } = render(<MapMarkers {...mockMarkerProps} hitoActivo={0} />);
+    
+    const closeButton = getByTestId("close-info-window-btn");
 
     fireEvent.click(closeButton);
     
+    rerender(<MapMarkers {...mockMarkerProps} hitoActivo={null} />);
+
+    expect(screen.queryByTestId("info-window-mock")).not.toBeInTheDocument();
     expect(mockMarkerProps.setHitoActivo).toHaveBeenCalledWith(null);
   });
 });
