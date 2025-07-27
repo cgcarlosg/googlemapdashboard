@@ -10,3 +10,12 @@ export type MarkerData = {
 export type AppProps = {
   center: google.maps.LatLngLiteral;
 };
+
+export interface MapControlsProps {
+  mostrarHitos: boolean;
+  setMostrarHitos: (value: boolean) => void;
+  mostrarCirculos: boolean;
+  setMostrarCirculos: (value: boolean) => void;
+  mostrarPuntosInteres: boolean;
+  setMostrarPuntosInteres: (value: boolean) => void;
+}

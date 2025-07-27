@@ -8,7 +8,7 @@ import {
   Pin,
   type MapMouseEvent,
 } from "@vis.gl/react-google-maps";
-
+import MapControls from "./MapControls";
 import "./MapContainer.scss";
 import type { AppProps } from "../../types";
 
@@ -147,23 +147,22 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     circulosRef.current.forEach((c) => c.setMap(null));
     circulosRef.current = [];
 
-     if (mostrarCirculos) {
-    hitos.forEach((punto) => {
-      const circulo = new google.maps.Circle({
-        map: mapRef.current!,
-        center: punto,
-        radius: 450,
-        strokeColor: "#ff008cff",
-        strokeOpacity: 0.6,
-        strokeWeight: 1,
-        fillColor: "#ff008cff",
-        fillOpacity: 0.2,
-      });
+    if (mostrarCirculos) {
+      hitos.forEach((punto) => {
+        const circulo = new google.maps.Circle({
+          map: mapRef.current!,
+          center: punto,
+          radius: 450,
+          strokeColor: "#ff008cff",
+          strokeOpacity: 0.6,
+          strokeWeight: 1,
+          fillColor: "#ff008cff",
+          fillOpacity: 0.2,
+        });
 
-      circulosRef.current.push(circulo);
-    });
-  }
-    
+        circulosRef.current.push(circulo);
+      });
+    }
 
     hitos.forEach((punto) => {
       for (let i = 0; i < 2; i++) {
@@ -180,32 +179,14 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
     <div className="mapcontainer">
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <div className="mapcontainer__container">
-          <div className="mapcontainer__controls">
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarHitos}
-                onChange={(e) => setMostrarHitos(e.target.checked)}
-              />
-              Mostrar Hitos
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarCirculos}
-                onChange={(e) => setMostrarCirculos(e.target.checked)}
-              />
-              Mostrar Círculos
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={mostrarPuntosInteres}
-                onChange={(e) => setMostrarPuntosInteres(e.target.checked)}
-              />
-              Mostrar Puntos de Interés
-            </label>
-          </div>
+          <MapControls
+            mostrarHitos={mostrarHitos}
+            setMostrarHitos={setMostrarHitos}
+            mostrarCirculos={mostrarCirculos}
+            setMostrarCirculos={setMostrarCirculos}
+            mostrarPuntosInteres={mostrarPuntosInteres}
+            setMostrarPuntosInteres={setMostrarPuntosInteres}
+          />
 
           <Map
             className="mapcontainer__map"
@@ -235,20 +216,22 @@ const MapContainer: React.FC<AppProps> = ({ center }) => {
                 <Pin />
               </AdvancedMarker>
             ))}
-            {mostrarHitos && hitos.map((hito, idx) => (
-              <AdvancedMarker key={`hito-${idx}`} position={hito}>
-                <Pin background={"#FF0000"} />
-              </AdvancedMarker>
-            ))}
-            { mostrarPuntosInteres && puntosInteres.map((poi, idx) => (
-              <AdvancedMarker
-                key={`poi-${idx}`}
-                position={poi.position}
-                title={`${poi.tipo}`}
-              >
-                <Pin background={"#000000"} glyphColor={"#FFFFFF"} />
-              </AdvancedMarker>
-            ))}
+            {mostrarHitos &&
+              hitos.map((hito, idx) => (
+                <AdvancedMarker key={`hito-${idx}`} position={hito}>
+                  <Pin background={"#FF0000"} />
+                </AdvancedMarker>
+              ))}
+            {mostrarPuntosInteres &&
+              puntosInteres.map((poi, idx) => (
+                <AdvancedMarker
+                  key={`poi-${idx}`}
+                  position={poi.position}
+                  title={`${poi.tipo}`}
+                >
+                  <Pin background={"#000000"} glyphColor={"#FFFFFF"} />
+                </AdvancedMarker>
+              ))}
           </Map>
         </div>
       </APIProvider>
