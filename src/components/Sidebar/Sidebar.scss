@@ -1,7 +1,8 @@
 .sidebar {
     $self: &;
 
-    height: fit-content;
+    height: 100%;
+    overflow-y: auto;
     width: 100%;
 
     @media (min-width: 1200px) {
@@ -9,13 +10,18 @@
         width: 38.5%;
     }
 
-    ul {
-        list-style: none;
+    #{$self}__list {
+        height: 100%;
+         list-style: none;
 
-        li {
+           li {
             text-align: left;
             width: 100%;
         }
     }
+
+    .chartWidget:first-child {
+        height: 100px;
+    } 
 
 }

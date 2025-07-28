@@ -1,0 +1,9 @@
+.genericbarchart {
+    $self: &;
+    
+    width: 100%;
+
+    #{$self}__bar {
+        margin: 5px;
+    }
+}

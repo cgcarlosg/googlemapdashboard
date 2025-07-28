@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type SearchProps = {
   onLocationSelect: (coords: google.maps.LatLngLiteral) => void;
   onNewRouteStart: (coords: google.maps.LatLngLiteral) => void; 
@@ -74,3 +75,23 @@ export interface MapContainerProps {
   setMostrarPuntosInteres: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+export interface GenericBarChartProps {
+    data: any[];
+    dataKey: string;
+    categoryKey: string;
+    barColors?: string[] | ((entry: any, index: number) => string); 
+    className?: string;
+}
+
+export interface ChartWidgetProps {
+    title: string;
+    headerLabel?: string;
+    isVisible: boolean;
+    hasData: boolean;
+    content: React.ReactNode;
+    chartData?: any[];
+    dataKey?: string;
+    categoryKey?: string;
+    barColors?: string[] | ((entry: any, index: number) => string);
+    noDataMessage: React.ReactNode;
+}

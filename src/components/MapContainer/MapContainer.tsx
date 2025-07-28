@@ -1,4 +1,5 @@
  import React, { useState, useEffect, useRef } from "react";
+ import useMediaQuery from "../../hooks/useMediaQuery";
 import type {
   MapContainerProps,
   UserPath,
@@ -33,6 +34,8 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
   const lastCenter = useRef(center);
   const [hitoActivo, setHitoActivo] = useState<number | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
+
+  const isTabletOrLarger = useMediaQuery('(min-width: 1200px)'); 
 
   useEffect(() => {
     if (pathPoints.length < 2) {
@@ -129,7 +132,7 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
             defaultZoom={13}
             mapId={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
             onClick={handleMapClick}
-            gestureHandling="greedy"
+            gestureHandling={isTabletOrLarger ? "greedy" : "cooperative"}
             disableDefaultUI={false}
             onIdle={(ev) => {
               if (!mapRef.current) {
