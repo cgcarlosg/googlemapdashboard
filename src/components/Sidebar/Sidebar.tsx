@@ -31,7 +31,6 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
 
     return (
         <section className="sidebar">
-            <h2 className="sidebar__title">Análisis de la Zona</h2>
             <div className="widget">
                 <h3>Resumen de Puntos de Interés</h3>
                 <p><strong>Total de POIs:</strong> {puntosInteres.length}</p>
@@ -45,7 +44,6 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
                 </ul>
             </div>
 
-            {/* Widget: Gráfico de Franjas Etarias */}
             <div className="widget">
                 <div className="widget-header">
                     <h3>Franjas Etarias</h3>
@@ -53,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
                 </div>
                 <ResponsiveContainer width="100%" height={200}>
                     <BarChart
-                        data={ageGroupData} // Usamos los datos de las props
+                        data={ageGroupData}
                         layout="vertical"
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
@@ -70,12 +68,11 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
                 </ResponsiveContainer>
             </div>
 
-            {/* Widget: Gráfico de Nivel Socioeconómico */}
             <div className="widget">
                 <h3>Nivel Socioeconómico</h3>
                 <ResponsiveContainer width="100%" height={200}>
                     <BarChart
-                        data={socioeconomicData} // Usamos los datos de las props
+                        data={socioeconomicData}
                         layout="vertical"
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
