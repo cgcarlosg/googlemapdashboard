@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MapContainer from "./components/MapContainer/MapContainer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
 import Header from "./components/Header/Header";
 import type { PoiData, HitosData, AgeGroupData, SocioeconomicData, MapContainerProps, SidebarProps, UserPath } from "./types";
-import useLocalStorage from "./hooks/useLocalStorage"; // Asegúrate de que este hook esté bien implementado
+import useLocalStorage from "./hooks/useLocalStorage";
 import { interpolatePoints, generarPuntoAleatorioEnCirculo } from "./utils/mapUtils";
 
 const defaultCenter = { lat: 4.710989, lng: -74.07209 };
@@ -16,6 +16,9 @@ const App = () => {
   const [puntosInteres, setPuntosInteres] = useLocalStorage<PoiData[]>("mapPuntosInteres", []);
   const [ageGroupData, setAgeGroupData] = useLocalStorage<AgeGroupData>("mapAgeData", []);
   const [socioeconomicData, setSocioeconomicData] = useLocalStorage<SocioeconomicData>("mapSocioData", []);
+  const [mostrarHitos, setMostrarHitos] = useState(true);
+  const [mostrarCirculos, setMostrarCirculos] = useState(true); 
+  const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
 
   useEffect(() => {
     if (pathPoints.length < 2) {
@@ -93,13 +96,22 @@ const App = () => {
     pathPoints,
     setPathPoints,
     onClearData: handleClearData,
+    mostrarHitos,
+    setMostrarHitos,
+    mostrarCirculos,
+    setMostrarCirculos,
+    mostrarPuntosInteres,
+    setMostrarPuntosInteres,
   }
 
   const sidebarProps: SidebarProps = {
     puntosInteres: puntosInteres,
     hitos: hitos,
     ageGroupData: ageGroupData,
-    socioeconomicData: socioeconomicData
+    socioeconomicData: socioeconomicData,
+    mostrarHitos,
+    mostrarPuntosInteres,
+    mostrarCirculos,
   }
 
   return (

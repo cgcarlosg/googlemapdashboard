@@ -1,5 +1,4 @@
- 
-import React, { useState, useEffect, useRef } from "react";
+ import React, { useState, useEffect, useRef } from "react";
 import type {
   MapContainerProps,
   UserPath,
@@ -20,15 +19,18 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
   pathPoints,
   setPathPoints,
   onClearData,
+  mostrarHitos,
+  setMostrarHitos,
+  mostrarCirculos,
+  setMostrarCirculos,
+  mostrarPuntosInteres,
+  setMostrarPuntosInteres,
 }) => {
   const mapRef = useRef<google.maps.Map | null>(null);
   const rutaRef = useRef<google.maps.Polyline | null>(null);
   const circulosRef = useRef<google.maps.Circle[]>([]);
 
   const lastCenter = useRef(center);
-  const [mostrarHitos, setMostrarHitos] = useState(true);
-  const [mostrarCirculos, setMostrarCirculos] = useState(true);
-  const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
   const [hitoActivo, setHitoActivo] = useState<number | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 

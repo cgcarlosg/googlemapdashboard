@@ -30,11 +30,14 @@ export interface MarkerProps {
   setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
 }
 
-export interface SidebarProps { 
+export interface SidebarProps {
   puntosInteres: PoiData[];
   hitos: HitosData[];
   ageGroupData: AgeGroupData;
-  socioeconomicData: SocioeconomicData; 
+  socioeconomicData: SocioeconomicData;
+  mostrarHitos: boolean;
+  mostrarPuntosInteres: boolean;
+  mostrarCirculos: boolean;
 }
 
 export type PoiData = { position: google.maps.LatLngLiteral; tipo: string };
@@ -61,6 +64,12 @@ export interface MapContainerProps {
   socioData: SocioeconomicData;
   pathPoints: UserPath;
   setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
-  onClearData: () => void; 
+  onClearData: () => void;
+  mostrarHitos: boolean;
+  setMostrarHitos: React.Dispatch<React.SetStateAction<boolean>>;
+  mostrarCirculos: boolean;
+  setMostrarCirculos: React.Dispatch<React.SetStateAction<boolean>>;
+  mostrarPuntosInteres: boolean;
+  setMostrarPuntosInteres: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
