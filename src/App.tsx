@@ -1,23 +1,23 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import MapContainer from "./components/MapContainer/MapContainer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
 import Header from "./components/Header/Header";
 import type { PoiData, HitosData, AgeGroupData, SocioeconomicData, MapContainerProps, SidebarProps, UserPath } from "./types";
-import useLocalStorage from "./hooks/useLocalStorage";
-import { interpolatePoints, generarPuntoAleatorioEnCirculo } from "./utils/mapUtils"; 
+import useLocalStorage from "./hooks/useLocalStorage"; // Asegúrate de que este hook esté bien implementado
+import { interpolatePoints, generarPuntoAleatorioEnCirculo } from "./utils/mapUtils";
 
 const defaultCenter = { lat: 4.710989, lng: -74.07209 };
 
 const App = () => {
   const [center, setCenter] = useLocalStorage("last-center", defaultCenter);
-  const [puntosInteres, setPuntosInteres] = useState<PoiData[]>([]);
-  const [hitos, setHitos] = useState<HitosData[]>([]);
-  const [ageGroupData, setAgeGroupData] = useState<AgeGroupData>([]);
-  const [socioeconomicData, setSocioeconomicData] = useState<SocioeconomicData>([]);
-  const [pathPoints, setPathPoints] = useState<UserPath>([]);
+  const [pathPoints, setPathPoints] = useLocalStorage<UserPath>("mapPathPoints", []);
+  const [hitos, setHitos] = useLocalStorage<HitosData[]>("mapHitos", []);
+  const [puntosInteres, setPuntosInteres] = useLocalStorage<PoiData[]>("mapPuntosInteres", []);
+  const [ageGroupData, setAgeGroupData] = useLocalStorage<AgeGroupData>("mapAgeData", []);
+  const [socioeconomicData, setSocioeconomicData] = useLocalStorage<SocioeconomicData>("mapSocioData", []);
 
- useEffect(() => {
+  useEffect(() => {
     if (pathPoints.length < 2) {
       setHitos([]);
       setPuntosInteres([]);
@@ -26,20 +26,14 @@ const App = () => {
       return;
     }
 
-    if (pathPoints.length === 2 && hitos.length > 0 && puntosInteres.length > 0 && ageGroupData.length > 0 && socioeconomicData.length > 0) {
-        return;
-    }
-
     const interpolatedPoints = interpolatePoints(pathPoints, 1000);
     const allHitos: google.maps.LatLngLiteral[] = [];
     if (pathPoints[0]) allHitos.push(pathPoints[0]);
     interpolatedPoints.forEach(p => {
-
       if (!(p.lat === pathPoints[0].lat && p.lng === pathPoints[0].lng)) {
         allHitos.push(p);
       }
     });
-
     if (pathPoints[1] && !(allHitos[allHitos.length - 1]?.lat === pathPoints[1].lat && allHitos[allHitos.length - 1]?.lng === pathPoints[1].lng)) {
       allHitos.push(pathPoints[1]);
     }
@@ -54,7 +48,7 @@ const App = () => {
         nuevosPOI.push({ position: pos, tipo });
       }
     });
-    setPuntosInteres(nuevosPOI);
+    setPuntosInteres(nuevosPOI); 
 
     const newAgeData: AgeGroupData = [
       { name: '0-17 años', value: Math.floor(Math.random() * 100) + 20, color: '#8884d8' },
@@ -81,6 +75,7 @@ const App = () => {
     setPuntosInteres([]);
     setAgeGroupData([]);
     setSocioeconomicData([]);
+
     localStorage.removeItem("mapPathPoints");
     localStorage.removeItem("mapHitos");
     localStorage.removeItem("mapPuntosInteres");
@@ -89,7 +84,7 @@ const App = () => {
 
   }, [setPathPoints, setHitos, setPuntosInteres, setAgeGroupData, setSocioeconomicData]);
 
-const mapProps: MapContainerProps = {
+  const mapProps: MapContainerProps = {
     center,
     hitos,
     puntosInteres,
@@ -104,7 +99,7 @@ const mapProps: MapContainerProps = {
     puntosInteres: puntosInteres,
     hitos: hitos,
     ageGroupData: ageGroupData,
-    socioeconomicData: socioeconomicData 
+    socioeconomicData: socioeconomicData
   }
 
   return (
