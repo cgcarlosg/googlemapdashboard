@@ -46,12 +46,8 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
   const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
   const [hitoActivo, setHitoActivo] = useState<number | null>(null);
 
-  // Variable de estado para indicar que el mapa está listo
   const [isMapReady, setIsMapReady] = useState(false);
 
-  // *** Primer useEffect (Generación de Hitos, POI, Demográficos) ***
-  // Mantén este useEffect como lo teníamos en la última revisión.
-  // Es responsable de la lógica de datos, no directamente del dibujo.
   useEffect(() => {
     if (pathPoints.length < 2) {
       if (rutaRef.current) {
@@ -77,7 +73,6 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
       onDemographicsChange(ageData, socioData);
       return;
     }
-
     const interpolatedPoints = interpolatePoints(pathPoints, 1000);
     const allHitos: google.maps.LatLngLiteral[] = [];
     if (pathPoints[0]) allHitos.push(pathPoints[0]);
@@ -120,16 +115,10 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
     setAgeData(newAgeData);
     setSocioData(newSocioData);
     onDemographicsChange(newAgeData, newSocioData);
+  }, [pathPoints, onHitosChange, onPuntosInteresChange, onDemographicsChange, hitos, puntosInteres, ageData, socioData]);
 
-  }, [pathPoints, onHitosChange, onPuntosInteresChange, onDemographicsChange]);
-
-
-  // *** useEffect para dibujar la polilínea y los círculos ***
-  // Este useEffect ahora depende de `isMapReady` para asegurar que el mapa está cargado.
   useEffect(() => {
-    // Solo proceder si el mapa está listo Y tenemos pathPoints para dibujar
-    if (!isMapReady || pathPoints.length !== 2) {
-      // Limpiar polilínea y círculos si no hay ruta o el mapa no está listo
+    if (!isMapReady || !mapRef.current) {
       if (rutaRef.current) {
         rutaRef.current.setMap(null);
         rutaRef.current = null;
@@ -139,27 +128,31 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
       return;
     }
 
-    // Lógica para la polilínea
-    if (rutaRef.current) {
-      rutaRef.current.setMap(null); // Limpiar la ruta anterior antes de dibujar la nueva
+    if (pathPoints.length === 2) {
+      if (rutaRef.current) {
+        rutaRef.current.setMap(null);
+      }
+      rutaRef.current = new google.maps.Polyline({
+        path: pathPoints,
+        map: mapRef.current,
+        strokeColor: "#0000FF",
+        strokeOpacity: 1.0,
+        strokeWeight: 4,
+      });
+    } else {
+      if (rutaRef.current) {
+        rutaRef.current.setMap(null);
+        rutaRef.current = null;
+      }
     }
-    rutaRef.current = new google.maps.Polyline({
-      path: pathPoints,
-      map: mapRef.current, // mapRef.current estará disponible aquí gracias a isMapReady
-      strokeColor: "#0000FF",
-      strokeOpacity: 1.0,
-      strokeWeight: 4,
-    });
 
-
-    // Lógica para los círculos
-    circulosRef.current.forEach((c) => c.setMap(null)); // Limpiar círculos anteriores
+    circulosRef.current.forEach((c) => c.setMap(null));
     circulosRef.current = [];
 
     if (mostrarCirculos && hitos.length > 0) {
       hitos.forEach((punto) => {
         const circulo = new google.maps.Circle({
-          map: mapRef.current!, // mapRef.current estará disponible aquí
+          map: mapRef.current!,
           center: punto,
           radius: 450,
           strokeColor: "#ff008cff",
@@ -171,7 +164,7 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
         circulosRef.current.push(circulo);
       });
     }
-  }, [isMapReady, pathPoints, hitos, mostrarCirculos]); // Añadimos isMapReady como dependencia
+  }, [isMapReady, pathPoints, hitos, mostrarCirculos]);
 
   useEffect(() => {
     if (
@@ -218,11 +211,9 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
             gestureHandling="greedy"
             disableDefaultUI={false}
             onIdle={(ev) => {
-              // Cuando el mapa esté completamente cargado e inactivo,
-              // asignamos la referencia y marcamos que está listo.
               if (!mapRef.current) {
                 mapRef.current = ev.map;
-                setIsMapReady(true); // <--- ¡Importante!
+                setIsMapReady(true);
               }
             }}
           >
