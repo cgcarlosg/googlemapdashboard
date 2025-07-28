@@ -9,13 +9,6 @@ export type MarkerData = {
   position: google.maps.LatLngLiteral;
 };
 
-export interface MapContainerProps {
-  center: google.maps.LatLngLiteral;
-  onHitosChange: (hitos: HitosData[]) => void;
-  onPuntosInteresChange: (pois: PoiData[]) => void;
-  onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
-}
-
 export interface MapControlsProps {
   mostrarHitos: boolean;
   setMostrarHitos: (value: boolean) => void;
@@ -23,6 +16,7 @@ export interface MapControlsProps {
   setMostrarCirculos: (value: boolean) => void;
   mostrarPuntosInteres: boolean;
   setMostrarPuntosInteres: (value: boolean) => void;
+  onClearData: () => void;
 }
 
 export interface MarkerProps {
@@ -61,9 +55,12 @@ export type SocioeconomicData = {
 
 export interface MapContainerProps {
   center: google.maps.LatLngLiteral;
-  onHitosChange: (hitos: HitosData[]) => void;
-  onPuntosInteresChange: (pois: PoiData[]) => void;
-  onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
-  setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
+  hitos: HitosData[];
+  puntosInteres: PoiData[];
+  ageData: AgeGroupData;
+  socioData: SocioeconomicData;
   pathPoints: UserPath;
+  setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
+  onClearData: () => void; 
 }
+

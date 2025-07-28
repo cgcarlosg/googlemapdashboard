@@ -8,6 +8,7 @@ const MapControls: React.FC<MapControlsProps> = ({
   setMostrarCirculos,
   mostrarPuntosInteres,
   setMostrarPuntosInteres,
+  onClearData
 }) => {
   return (
     <div className="mapcontainer__controls">
@@ -35,6 +36,9 @@ const MapControls: React.FC<MapControlsProps> = ({
         />
         Mostrar Puntos de Interés
       </label>
+      <button onClick={onClearData} className="mapcontainer__clear-button">
+        Limpiar Datos
+      </button>
     </div>
   );
 };
