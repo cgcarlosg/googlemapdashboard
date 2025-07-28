@@ -31,7 +31,6 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
 
     return (
         <section className="sidebar">
-            <h2 className="sidebar__title">Análisis de la Zona</h2>
             <div className="widget">
                 <h3>Resumen de Puntos de Interés</h3>
                 <p><strong>Total de POIs:</strong> {puntosInteres.length}</p>
