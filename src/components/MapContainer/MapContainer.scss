@@ -5,6 +5,10 @@
   width: 100%;
   z-index: 1;
 
+  @media (min-width: 1200px) {
+    width: 60.5%
+  }
+
   #{$self}__container {
     border: 1px solid #ccc;
     height: 100%;

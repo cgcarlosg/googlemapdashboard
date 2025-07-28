@@ -1,0 +1,12 @@
+.sidebar {
+    $self: &;
+
+    height: fit-content;
+    width: 100%;
+
+    @media (min-width: 1200px) {
+        height: 100%;
+        width: 38.5%;
+    }
+
+}
