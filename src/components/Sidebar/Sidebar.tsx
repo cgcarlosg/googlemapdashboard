@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ puntosInteres, ageGroupData, socioeco
         'Tienda': '🏪',
     };
     
-    const totalVisitors = ageGroupData.reduce((sum, entry) => sum + entry.value, 0);
+    const totalVisitors = ageGroupData ? ageGroupData.reduce((sum, entry) => sum + entry.value, 0) : 0;
 
     return (
         <section className="sidebar">
