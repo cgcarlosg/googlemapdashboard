@@ -5,18 +5,17 @@ import type { MarkerProps } from "../../types";
 import "./MapContainer.scss";
 
 const MapMarkers: React.FC<MarkerProps> = ({
-  markers,
-  setMarkers,
   hitos,
   mostrarHitos,
   puntosInteres,
   mostrarPuntosInteres,
   hitoActivo,
   setHitoActivo,
+  pathPoints,
+  setPathPoints,
 }) => {
   const streetViewLib = useMapsLibrary("streetView");
   const streetViewContainer = useRef<HTMLDivElement>(null);
-
   const [streetViewError, setStreetViewError] = useState<string | null>(null);
 
   const initializeStreetView = useCallback(
@@ -65,18 +64,24 @@ const MapMarkers: React.FC<MarkerProps> = ({
     [hitoActivo, streetViewLib, hitos]
   );
 
+  const handlePathMarkerClick = useCallback((index: number) => {
+    setPathPoints(prev => prev.filter((_, i) => i !== index));
+  }, [setPathPoints]);
+  
   return (
     <>
-      {markers.map((marker) => (
+      {pathPoints.map((point, index) => (
         <AdvancedMarker
-          key={marker.id}
-          position={marker.position}
-          title={`Marcador en: ${marker.position.lat.toFixed(4)}, ${marker.position.lng.toFixed(4)}`}
-          onClick={() =>
-            setMarkers((prev) => prev.filter((m) => m.id !== marker.id))
-          }
+          key={`path-point-${index}`}
+          position={point}
+          title={index === 0 ? "Punto de Inicio" : "Punto Final"}
+          onClick={() => handlePathMarkerClick(index)}
         >
-          <Pin />
+          <Pin
+            background={index === 0 ? "#FFC107" : "#03A9F4"}
+            glyphColor="#FFFFFF"
+            borderColor={index === 0 ? "#FFC107" : "#03A9F4"}
+          />
         </AdvancedMarker>
       ))}
 

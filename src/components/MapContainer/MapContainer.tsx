@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useRef } from "react";
 import type {
-  MarkerData,
   PoiData,
   MapContainerProps,
   AgeGroupData,
   SocioeconomicData,
 } from "../../types";
-import { mockLocations } from "../../data/MockLocations";
-import {
+  import {
   APIProvider,
   Map,
   type MapMouseEvent,
@@ -26,8 +25,9 @@ const MapContainer: React.FC<MapContainerProps> = ({
   onHitosChange,
   onPuntosInteresChange,
   onDemographicsChange,
+  pathPoints,
+  setPathPoints,
 }) => {
-  const [markers, setMarkers] = useState<MarkerData[]>([]);
   const mapRef = useRef<google.maps.Map | null>(null);
   const rutaRef = useRef<google.maps.Polyline | null>(null);
   const [hitos, setHitos] = useState<google.maps.LatLngLiteral[]>([]);
@@ -41,107 +41,76 @@ const MapContainer: React.FC<MapContainerProps> = ({
   const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
   const [hitoActivo, setHitoActivo] = useState<number | null>(null);
 
-  const lastHitosRef = useRef<google.maps.LatLngLiteral[]>([]);
-
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (mapRef.current && !rutaRef.current) {
-        const path = mockLocations.map((loc) => loc.coords);
-        rutaRef.current = new google.maps.Polyline({
-          path,
-          map: mapRef.current,
-          strokeColor: "#0000FF",
-          strokeOpacity: 1.0,
-          strokeWeight: 4,
-        });
+    if (mapRef.current && pathPoints.length === 2) {
+      if (rutaRef.current) {
+        rutaRef.current.setMap(null);
+      }
+      rutaRef.current = new google.maps.Polyline({
+        path: pathPoints,
+        map: mapRef.current,
+        strokeColor: "#0000FF",
+        strokeOpacity: 1.0,
+        strokeWeight: 4,
+      });
 
-        const puntos = interpolatePoints(path, 1000);
-        const areHitosTheSame =
-          lastHitosRef.current.length === puntos.length &&
-          lastHitosRef.current.every(
-            (h, i) => h.lat === puntos[i].lat && h.lng === puntos[i].lng
-          );
+      const puntos = interpolatePoints(pathPoints, 1000);
+      setHitos(puntos);
+      onHitosChange(puntos);
 
-        if (!areHitosTheSame) {
-          setHitos(puntos);
-          onHitosChange(puntos);
-          lastHitosRef.current = puntos;
+      const tipos = ["Parque", "Restaurante", "Tienda"];
+      const nuevosPOI: PoiData[] = [];
+      puntos.forEach((punto) => {
+        for (let i = 0; i < 2; i++) {
+          const pos = generarPuntoAleatorioEnCirculo(punto, 450);
+          const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+          nuevosPOI.push({ position: pos, tipo });
         }
-      }
-    }, 500);
+      });
+      setPuntosInteres(nuevosPOI);
+      onPuntosInteresChange(nuevosPOI);
 
-    return () => clearTimeout(timeout);
-  }, [onHitosChange]);
-
-  useEffect(() => {
-    if (!mapRef.current || hitos.length === 0) return;
-
-    const tipos = ["Parque", "Restaurante", "Tienda"];
-    const nuevosPOI: PoiData[] = [];
-
-    hitos.forEach((punto) => {
-      for (let i = 0; i < 2; i++) {
-        const pos = generarPuntoAleatorioEnCirculo(punto, 450);
-        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-        nuevosPOI.push({ position: pos, tipo });
-      }
-    });
-    setPuntosInteres(nuevosPOI);
-    onPuntosInteresChange(nuevosPOI);
-
-    if (onDemographicsChange) {
       const newAgeData: AgeGroupData = [
-        {
-          name: "0-17 años",
-          value: Math.floor(Math.random() * 100) + 20,
-          color: "#8884d8",
-        },
-        {
-          name: "18-35 años",
-          value: Math.floor(Math.random() * 100) + 80,
-          color: "#82ca9d",
-        },
-        {
-          name: "36-55 años",
-          value: Math.floor(Math.random() * 100) + 50,
-          color: "#ffc658",
-        },
-        {
-          name: "56+ años",
-          value: Math.floor(Math.random() * 50) + 10,
-          color: "#ff7300",
-        },
+        { name: '0-17 años', value: Math.floor(Math.random() * 100) + 20, color: '#8884d8' },
+        { name: '18-35 años', value: Math.floor(Math.random() * 100) + 80, color: '#82ca9d' },
+        { name: '36-55 años', value: Math.floor(Math.random() * 100) + 50, color: '#ffc658' },
+        { name: '56+ años', value: Math.floor(Math.random() * 50) + 10, color: '#ff7300' },
       ];
       const newSocioData: SocioeconomicData = [
-        {
-          name: "Clase A",
-          value: Math.floor(Math.random() * 30) + 10,
-          color: "#0088FE",
-        },
-        {
-          name: "Clase B",
-          value: Math.floor(Math.random() * 60) + 30,
-          color: "#00C49F",
-        },
-        {
-          name: "Clase C",
-          value: Math.floor(Math.random() * 80) + 50,
-          color: "#FFBB28",
-        },
-        {
-          name: "Clase D",
-          value: Math.floor(Math.random() * 40) + 20,
-          color: "#FF8042",
-        },
-        {
-          name: "Clase E",
-          value: Math.floor(Math.random() * 20) + 5,
-          color: "#AF19FF",
-        },
+        { name: 'Clase A', value: Math.floor(Math.random() * 30) + 10, color: '#0088FE' },
+        { name: 'Clase B', value: Math.floor(Math.random() * 60) + 30, color: '#00C49F' },
+        { name: 'Clase C', value: Math.floor(Math.random() * 80) + 50, color: '#FFBB28' },
+        { name: 'Clase D', value: Math.floor(Math.random() * 40) + 20, color: '#FF8042' },
+        { name: 'Clase E', value: Math.floor(Math.random() * 20) + 5, color: '#AF19FF' },
       ];
       onDemographicsChange(newAgeData, newSocioData);
     }
-  }, [hitos, onPuntosInteresChange, onDemographicsChange]);
+  }, [pathPoints, mapRef, onHitosChange, onPuntosInteresChange, onDemographicsChange]); 
+
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    
+    circulosRef.current.forEach((c) => c.setMap(null));
+    circulosRef.current = [];
+
+    if (mostrarCirculos && hitos.length > 0) {
+      hitos.forEach((punto) => {
+        const circulo = new google.maps.Circle({
+          map: mapRef.current!,
+          center: punto,
+          radius: 450,
+          strokeColor: "#ff008cff",
+          strokeOpacity: 0.6,
+          strokeWeight: 1,
+          fillColor: "#ff008cff",
+          fillOpacity: 0.2,
+        });
+        circulosRef.current.push(circulo);
+      });
+    }
+  }, [hitos, mostrarCirculos]);
+
 
   useEffect(() => {
     if (
@@ -154,63 +123,15 @@ const MapContainer: React.FC<MapContainerProps> = ({
     }
   }, [center]);
 
-  const handleMapClick = (event: MapMouseEvent) => {
+    const handleMapClick = (event: MapMouseEvent) => {
     const latLng = event.detail.latLng;
-
     if (!latLng) return;
-
-    const newMarker: MarkerData = {
-      id: crypto.randomUUID(),
-      position: {
-        lat: latLng.lat,
-        lng: latLng.lng,
-      },
-    };
-
-    setMarkers((prev) => [...prev, newMarker]);
-  };
-
-  useEffect(() => {
-    if (!mapRef.current || hitos.length === 0) return;
-
-    circulosRef.current.forEach((c) => c.setMap(null));
-    circulosRef.current = [];
-
-    if (mostrarCirculos) {
-      hitos.forEach((punto) => {
-        const circulo = new google.maps.Circle({
-          map: mapRef.current!,
-          center: punto,
-          radius: 450,
-          strokeColor: "#ff008cff",
-          strokeOpacity: 0.6,
-          strokeWeight: 1,
-          fillColor: "#ff008cff",
-          fillOpacity: 0.2,
-        });
-
-        circulosRef.current.push(circulo);
-      });
+    if (pathPoints.length < 2) {
+      setPathPoints((prev: any) => [...prev, { lat: latLng.lat, lng: latLng.lng }]);
+    } else {
+      setPathPoints([{ lat: latLng.lat, lng: latLng.lng }]);
     }
-  }, [hitos, mostrarCirculos]);
-
-  useEffect(() => {
-    if (!mapRef.current || hitos.length === 0) return;
-
-    const tipos = ["Parque", "Restaurante", "Tienda"];
-    const nuevosPOI: { position: google.maps.LatLngLiteral; tipo: string }[] =
-      [];
-
-    hitos.forEach((punto) => {
-      for (let i = 0; i < 2; i++) {
-        const pos = generarPuntoAleatorioEnCirculo(punto, 450);
-        const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-        nuevosPOI.push({ position: pos, tipo });
-      }
-    });
-
-    setPuntosInteres(nuevosPOI);
-  }, [hitos]);
+  };
 
   return (
     <div className="mapcontainer">
@@ -240,14 +161,14 @@ const MapContainer: React.FC<MapContainerProps> = ({
             }}
           >
             <MapMarkers
-              markers={markers}
-              setMarkers={setMarkers}
               hitos={hitos}
               mostrarHitos={mostrarHitos}
               puntosInteres={puntosInteres}
               mostrarPuntosInteres={mostrarPuntosInteres}
               hitoActivo={hitoActivo}
               setHitoActivo={setHitoActivo}
+              pathPoints={pathPoints}
+              setPathPoints={setPathPoints}
             />
           </Map>
         </div>

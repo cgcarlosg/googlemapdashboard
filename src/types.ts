@@ -26,8 +26,6 @@ export interface MapControlsProps {
 }
 
 export interface MarkerProps {
-  markers: MarkerData[];
-  setMarkers: React.Dispatch<React.SetStateAction<MarkerData[]>>;
   hitos: google.maps.LatLngLiteral[];
   mostrarHitos: boolean;
   puntosInteres: { position: google.maps.LatLngLiteral; tipo: string }[];
@@ -66,6 +64,6 @@ export interface MapContainerProps {
   onHitosChange: (hitos: HitosData[]) => void;
   onPuntosInteresChange: (pois: PoiData[]) => void;
   onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
-  
+  setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
   pathPoints: UserPath;
 }

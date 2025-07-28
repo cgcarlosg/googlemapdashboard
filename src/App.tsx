@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import MapContainer from "./components/MapContainer/MapContainer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
 import Header from "./components/Header/Header";
-import type { PoiData, HitosData, AgeGroupData, SocioeconomicData, MapContainerProps, SidebarProps } from "./types";
+import type { PoiData, HitosData, AgeGroupData, SocioeconomicData, MapContainerProps, SidebarProps, UserPath } from "./types";
 import useLocalStorage from "./hooks/useLocalStorage";
 
 const defaultCenter = { lat: 4.710989, lng: -74.07209 };
@@ -12,12 +12,9 @@ const App = () => {
   const [center, setCenter] = useLocalStorage("last-center", defaultCenter);
   const [puntosInteres, setPuntosInteres] = useState<PoiData[]>([]);
   const [hitos, setHitos] = useState<HitosData[]>([]);
-   const [ageGroupData, setAgeGroupData] = useState<AgeGroupData>([]);
+  const [ageGroupData, setAgeGroupData] = useState<AgeGroupData>([]);
   const [socioeconomicData, setSocioeconomicData] = useState<SocioeconomicData>([]);
-
-  useEffect(() => {
-    localStorage.setItem("last-center", JSON.stringify(center));
-  }, [center]);
+  const [pathPoints, setPathPoints] = useState<UserPath>([]);
 
     const handlePuntosInteresChange = useCallback((pois: PoiData[]) => {
     setPuntosInteres(pois);
@@ -36,7 +33,9 @@ const App = () => {
     center,
     onHitosChange: handleHitosChange,
     onPuntosInteresChange: handlePuntosInteresChange,
-    onDemographicsChange: handleDemographicsChange 
+    onDemographicsChange: handleDemographicsChange,
+    pathPoints,
+    setPathPoints
   }
 
   const sidebarProps: SidebarProps = {
