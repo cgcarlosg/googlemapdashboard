@@ -6,7 +6,7 @@ import logo from "../../assets/logoProject.png"
 import logomob from "../../assets/logoProjectMob.png"
 
 
-const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
+const Header: React.FC<SearchProps> =  ({ onLocationSelect, onNewRouteStart })  => {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -19,6 +19,7 @@ const Header: React.FC<SearchProps> = ({ onLocationSelect }) => {
     const selected = mockLocations.find(loc => loc.name === locationName);
     if (selected) {
       onLocationSelect(selected.coords);
+      onNewRouteStart(selected.coords);
       setQuery(selected.name);
       setShowSuggestions(false);
     }

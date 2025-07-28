@@ -87,6 +87,12 @@ const App = () => {
 
   }, [setPathPoints, setHitos, setPuntosInteres, setAgeGroupData, setSocioeconomicData]);
 
+   const handleNewRouteStart = useCallback((coords: google.maps.LatLngLiteral) => {
+        handleClearData();
+        setPathPoints([coords]);
+        setCenter(coords);
+    }, [handleClearData, setPathPoints, setCenter]);
+
   const mapProps: MapContainerProps = {
     center,
     hitos,
@@ -116,7 +122,7 @@ const App = () => {
 
   return (
     <div className="app">
-      <Header onLocationSelect={setCenter} />
+      <Header onLocationSelect={setCenter} onNewRouteStart={handleNewRouteStart} />
       <MapContainer {...mapProps} />
       <Sidebar {...sidebarProps} />
     </div>

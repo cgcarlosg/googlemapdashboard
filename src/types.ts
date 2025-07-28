@@ -1,5 +1,6 @@
 export type SearchProps = {
   onLocationSelect: (coords: google.maps.LatLngLiteral) => void;
+  onNewRouteStart: (coords: google.maps.LatLngLiteral) => void; 
 };
 
 export type UserPath = google.maps.LatLngLiteral[];
