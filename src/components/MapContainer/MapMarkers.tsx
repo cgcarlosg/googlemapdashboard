@@ -44,9 +44,6 @@ const MapMarkers: React.FC<MarkerProps> = ({
         panoramaInstance.current.setVisible(false);
         panoramaInstance.current = null;
       }
-      if (streetViewError !== null) {
-        setStreetViewError(null);
-      }
     };
 
     if (
@@ -55,9 +52,8 @@ const MapMarkers: React.FC<MarkerProps> = ({
       streetViewLib &&
       streetViewContainerRef.current
     ) {
-      if (streetViewError !== null) {
-        setStreetViewError(null);
-      }
+      cleanupPanorama();
+      setStreetViewError(null);
 
       const position = hitos[hitoActivo];
       const streetViewService = new (window as any).google.maps.StreetViewService();
@@ -67,11 +63,6 @@ const MapMarkers: React.FC<MarkerProps> = ({
         { location: position, radius: searchRadius, preference: "nearest" },
         (data: google.maps.StreetViewPanoramaData | null, status: google.maps.StreetViewStatus) => {
           if (status === (window as any).google.maps.StreetViewStatus.OK && data && data.location) {
-            if (panoramaInstance.current) {
-              panoramaInstance.current.setVisible(false);
-              panoramaInstance.current = null;
-            }
-
             if (streetViewContainerRef.current) {
               panoramaInstance.current = new (window as any).google.maps.StreetViewPanorama(
                 streetViewContainerRef.current,
@@ -82,9 +73,7 @@ const MapMarkers: React.FC<MarkerProps> = ({
                   visible: true,
                 }
               );
-              if (streetViewError !== null) {
-                setStreetViewError(null);
-              }
+              setStreetViewError(null);
             }
           } else {
             let errorMessage = "Street View no disponible para esta ubicación.";
@@ -95,17 +84,18 @@ const MapMarkers: React.FC<MarkerProps> = ({
             }
             setStreetViewError(errorMessage);
             console.error("Street View no disponible para esta ubicación:", status);
-            cleanupPanorama();
           }
         }
       );
     } else {
       cleanupPanorama();
+      setStreetViewError(null);
     }
+
     return () => {
       cleanupPanorama();
     };
-  }, [hitoActivo, hitos, streetViewLib, streetViewError]);
+  }, [hitoActivo, hitos, streetViewLib]);
 
   return (
     <>
@@ -150,9 +140,15 @@ const MapMarkers: React.FC<MarkerProps> = ({
                 <Pin background={pinColor} glyphColor={pinGlyphColor} />
               </AdvancedMarker>
 
-              {/* Only render InfoWindow if hitoActivo matches current hito and hito exists */}
               {hitoActivo === idx && hito && (
-                <InfoWindow position={hito} onCloseClick={() => setHitoActivo(null)}>
+                <InfoWindow position={hito} onCloseClick={() => {
+                   setHitoActivo(null);
+                   setStreetViewError(null);
+                   if (panoramaInstance.current) {
+                      panoramaInstance.current.setVisible(false);
+                      panoramaInstance.current = null;
+                   }
+                }}>
                   <div>
                     <h3>Hito {idx + 1}</h3>
                     <p>
