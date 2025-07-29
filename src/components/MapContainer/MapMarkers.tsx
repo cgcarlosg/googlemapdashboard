@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState } from "react"; 
 import { AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { MarkerProps } from "../../types";
@@ -34,38 +34,44 @@ const MapMarkers: React.FC<MarkerProps> = ({
     [setPathPoints, setHitoActivo]
   );
 
-  const setStreetViewRef = useCallback((node: HTMLDivElement | null) => {
-    streetViewContainerRef.current = node;
-  }, []);
-
-  useEffect(() => {
-    const cleanupPanorama = () => {
-      if (panoramaInstance.current) {
-        panoramaInstance.current.setVisible(false);
-        panoramaInstance.current = null;
+  const initializeStreetView = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node === null) {
+        if (panoramaInstance.current) {
+          panoramaInstance.current.setVisible(false);
+          panoramaInstance.current = null;
+        }
+        streetViewContainerRef.current = null;
+        setStreetViewError(null);
+        return;
       }
-    };
 
-    if (
-      hitoActivo !== null &&
-      hitos[hitoActivo] &&
-      streetViewLib &&
-      streetViewContainerRef.current
-    ) {
-      cleanupPanorama();
-      setStreetViewError(null);
+      if (hitoActivo === null || !hitos[hitoActivo] || !streetViewLib) {
+        setStreetViewError(null); 
+        return;
+      }
+
+      if (panoramaInstance.current && streetViewContainerRef.current === node) {
+          return;
+      }
+
+      streetViewContainerRef.current = node;
 
       const position = hitos[hitoActivo];
+
       const streetViewService = new (window as any).google.maps.StreetViewService();
-      const searchRadius = 200;
+      const searchRadius = 200; 
+
+      setStreetViewError(null); 
 
       streetViewService.getPanorama(
-        { location: position, radius: searchRadius, preference: "nearest" },
+        { location: position, radius: searchRadius, preference: "nearest" }, 
         (data: google.maps.StreetViewPanoramaData | null, status: google.maps.StreetViewStatus) => {
-          if (status === (window as any).google.maps.StreetViewStatus.OK && data && data.location) {
-            if (streetViewContainerRef.current) {
+
+          if (streetViewContainerRef.current === node && hitoActivo !== null && hitos[hitoActivo] === position) {
+            if (status === (window as any).google.maps.StreetViewStatus.OK && data && data.location) {
               panoramaInstance.current = new (window as any).google.maps.StreetViewPanorama(
-                streetViewContainerRef.current,
+                node,
                 {
                   position: data.location.latLng,
                   pov: { heading: 0, pitch: 0 },
@@ -74,28 +80,22 @@ const MapMarkers: React.FC<MarkerProps> = ({
                 }
               );
               setStreetViewError(null);
-            }
-          } else {
-            let errorMessage = "Street View no disponible para esta ubicación.";
-            if (status === (window as any).google.maps.StreetViewStatus.ZERO_RESULTS) {
-              errorMessage = `Street View no disponible en un radio de ${searchRadius}m.`;
             } else {
-              errorMessage = `Error al cargar Street View: ${status}.`;
+              let errorMessage = "Street View no disponible para esta ubicación.";
+              if (status === (window as any).google.maps.StreetViewStatus.ZERO_RESULTS) {
+                errorMessage = `Street View no disponible en un radio de ${searchRadius}m.`;
+              } else {
+                errorMessage = `Error al cargar Street View: ${status}.`;
+              }
+              setStreetViewError(errorMessage);
+              console.error("Street View no disponible para esta ubicación:", status);
             }
-            setStreetViewError(errorMessage);
-            console.error("Street View no disponible para esta ubicación:", status);
           }
         }
       );
-    } else {
-      cleanupPanorama();
-      setStreetViewError(null);
-    }
-
-    return () => {
-      cleanupPanorama();
-    };
-  }, [hitoActivo, hitos, streetViewLib]);
+    },
+    [hitoActivo, hitos, streetViewLib]
+  );
 
   return (
     <>
@@ -159,6 +159,7 @@ const MapMarkers: React.FC<MarkerProps> = ({
                     </p>
 
                     {streetViewError ? (
+
                       <div
                         style={{
                           padding: "10px",
@@ -174,7 +175,7 @@ const MapMarkers: React.FC<MarkerProps> = ({
                       </div>
                     ) : (
                       <div
-                        ref={setStreetViewRef}
+                        ref={initializeStreetView}
                         style={{
                           width: "300px",
                           height: "150px",
@@ -184,9 +185,9 @@ const MapMarkers: React.FC<MarkerProps> = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          backgroundColor: "#f0f0f0",
-                          color: "#555",
-                          fontSize: "14px",
+                          backgroundColor: '#f0f0f0',
+                          color: '#555',
+                          fontSize: '14px',
                         }}
                       >
                         {!panoramaInstance.current && "Cargando Street View..."}

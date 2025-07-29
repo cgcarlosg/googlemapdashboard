@@ -67,4 +67,14 @@
         top: 10%;
       }
   }
+
+   #{$self}__streetviewbox {
+    background-color: "#FFEBEE";
+    border-radius: "4px";
+    border: "1px solid #FF5733";
+    color: "#FF5733";
+    font-weight: "bold";
+    padding: "10px";
+    text-align: center;
+  }
 }

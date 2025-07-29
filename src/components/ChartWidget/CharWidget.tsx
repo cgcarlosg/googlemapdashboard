@@ -1,6 +1,6 @@
 import type {ChartWidgetProps} from '../../types';
 import GenericBarChart from '../GenericBarChart/GenericBarChart';
-import './CharWidget.scss'
+import './ChartWidget.scss'
 
 const ChartWidget: React.FC<ChartWidgetProps> = ({
     title,
