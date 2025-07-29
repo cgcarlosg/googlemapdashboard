@@ -3,22 +3,57 @@ import MapContainer from "./components/MapContainer/MapContainer";
 import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
 import Header from "./components/Header/Header";
-import type { PoiData, HitosData, AgeGroupData, SocioeconomicData, MapContainerProps, SidebarProps, UserPath } from "./types";
+import type {
+  PoiData,
+  HitosData,
+  AgeGroupData,
+  SocioeconomicData,
+  MapContainerProps,
+  SidebarProps,
+  UserPath,
+} from "./types";
 import useLocalStorage from "./hooks/useLocalStorage";
-import { interpolatePoints, generarPuntoAleatorioEnCirculo } from "./utils/mapUtils";
+import {
+  interpolatePoints,
+  generarPuntoAleatorioEnCirculo,
+} from "./utils/mapUtils";
+import OnboardingPopup from "./components/OnboardingPopup/OnboardingPopup";
 
 const defaultCenter = { lat: 4.710989, lng: -74.07209 };
 
 const App = () => {
   const [center, setCenter] = useLocalStorage("last-center", defaultCenter);
-  const [pathPoints, setPathPoints] = useLocalStorage<UserPath>("mapPathPoints", []);
+  const [pathPoints, setPathPoints] = useLocalStorage<UserPath>(
+    "mapPathPoints",
+    []
+  );
   const [hitos, setHitos] = useLocalStorage<HitosData[]>("mapHitos", []);
-  const [puntosInteres, setPuntosInteres] = useLocalStorage<PoiData[]>("mapPuntosInteres", []);
-  const [ageGroupData, setAgeGroupData] = useLocalStorage<AgeGroupData>("mapAgeData", []);
-  const [socioeconomicData, setSocioeconomicData] = useLocalStorage<SocioeconomicData>("mapSocioData", []);
+  const [puntosInteres, setPuntosInteres] = useLocalStorage<PoiData[]>(
+    "mapPuntosInteres",
+    []
+  );
+  const [ageGroupData, setAgeGroupData] = useLocalStorage<AgeGroupData>(
+    "mapAgeData",
+    []
+  );
+  const [socioeconomicData, setSocioeconomicData] =
+    useLocalStorage<SocioeconomicData>("mapSocioData", []);
   const [mostrarHitos, setMostrarHitos] = useState(true);
-  const [mostrarCirculos, setMostrarCirculos] = useState(true); 
+  const [mostrarCirculos, setMostrarCirculos] = useState(true);
   const [mostrarPuntosInteres, setMostrarPuntosInteres] = useState(true);
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem("hasSeenWelcomeMessage");
+    if (!hasSeenWelcome) {
+      setShowWelcomePopup(true);
+    }
+  }, []);
+
+  const handleCloseWelcomePopup = useCallback(() => {
+    setShowWelcomePopup(false);
+    localStorage.setItem("hasSeenWelcomeMessage", "true");
+  }, []);
 
   useEffect(() => {
     if (pathPoints.length < 2) {
@@ -32,12 +67,18 @@ const App = () => {
     const interpolatedPoints = interpolatePoints(pathPoints, 1000);
     const allHitos: google.maps.LatLngLiteral[] = [];
     if (pathPoints[0]) allHitos.push(pathPoints[0]);
-    interpolatedPoints.forEach(p => {
+    interpolatedPoints.forEach((p) => {
       if (!(p.lat === pathPoints[0].lat && p.lng === pathPoints[0].lng)) {
         allHitos.push(p);
       }
     });
-    if (pathPoints[1] && !(allHitos[allHitos.length - 1]?.lat === pathPoints[1].lat && allHitos[allHitos.length - 1]?.lng === pathPoints[1].lng)) {
+    if (
+      pathPoints[1] &&
+      !(
+        allHitos[allHitos.length - 1]?.lat === pathPoints[1].lat &&
+        allHitos[allHitos.length - 1]?.lng === pathPoints[1].lng
+      )
+    ) {
       allHitos.push(pathPoints[1]);
     }
     setHitos(allHitos);
@@ -51,25 +92,61 @@ const App = () => {
         nuevosPOI.push({ position: pos, tipo });
       }
     });
-    setPuntosInteres(nuevosPOI); 
+    setPuntosInteres(nuevosPOI);
 
     const newAgeData: AgeGroupData = [
-      { name: '0-17 años', value: Math.floor(Math.random() * 100) + 20, color: '#8884d8' },
-      { name: '18-35 años', value: Math.floor(Math.random() * 100) + 80, color: '#82ca9d' },
-      { name: '36-55 años', value: Math.floor(Math.random() * 100) + 50, color: '#ffc658' },
-      { name: '56+ años', value: Math.floor(Math.random() * 50) + 10, color: '#ff7300' },
+      {
+        name: "0-17 años",
+        value: Math.floor(Math.random() * 100) + 20,
+        color: "#8884d8",
+      },
+      {
+        name: "18-35 años",
+        value: Math.floor(Math.random() * 100) + 80,
+        color: "#82ca9d",
+      },
+      {
+        name: "36-55 años",
+        value: Math.floor(Math.random() * 100) + 50,
+        color: "#ffc658",
+      },
+      {
+        name: "56+ años",
+        value: Math.floor(Math.random() * 50) + 10,
+        color: "#ff7300",
+      },
     ];
     const newSocioData: SocioeconomicData = [
-      { name: 'Clase A', value: Math.floor(Math.random() * 30) + 10, color: '#0088FE' },
-      { name: 'Clase B', value: Math.floor(Math.random() * 60) + 30, color: '#00C49F' },
-      { name: 'Clase C', value: Math.floor(Math.random() * 80) + 50, color: '#FFBB28' },
-      { name: 'Clase D', value: Math.floor(Math.random() * 40) + 20, color: '#FF8042' },
-      { name: 'Clase E', value: Math.floor(Math.random() * 20) + 5, color: '#AF19FF' },
+      {
+        name: "Clase A",
+        value: Math.floor(Math.random() * 30) + 10,
+        color: "#0088FE",
+      },
+      {
+        name: "Clase B",
+        value: Math.floor(Math.random() * 60) + 30,
+        color: "#00C49F",
+      },
+      {
+        name: "Clase C",
+        value: Math.floor(Math.random() * 80) + 50,
+        color: "#FFBB28",
+      },
+      {
+        name: "Clase D",
+        value: Math.floor(Math.random() * 40) + 20,
+        color: "#FF8042",
+      },
+      {
+        name: "Clase E",
+        value: Math.floor(Math.random() * 20) + 5,
+        color: "#AF19FF",
+      },
     ];
     setAgeGroupData(newAgeData);
     setSocioeconomicData(newSocioData);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathPoints]);
 
   const handleClearData = useCallback(() => {
@@ -78,14 +155,22 @@ const App = () => {
     setPuntosInteres([]);
     setAgeGroupData([]);
     setSocioeconomicData([]);
+  }, [
+    setPathPoints,
+    setHitos,
+    setPuntosInteres,
+    setAgeGroupData,
+    setSocioeconomicData,
+  ]);
 
-  }, [setPathPoints, setHitos, setPuntosInteres, setAgeGroupData, setSocioeconomicData]);
-
-   const handleNewRouteStart = useCallback((coords: google.maps.LatLngLiteral) => {
-        handleClearData();
-        setPathPoints([coords]);
-        setCenter(coords);
-    }, [handleClearData, setPathPoints, setCenter]);
+  const handleNewRouteStart = useCallback(
+    (coords: google.maps.LatLngLiteral) => {
+      handleClearData();
+      setPathPoints([coords]);
+      setCenter(coords);
+    },
+    [handleClearData, setPathPoints, setCenter]
+  );
 
   const mapProps: MapContainerProps = {
     center,
@@ -102,7 +187,7 @@ const App = () => {
     setMostrarCirculos,
     mostrarPuntosInteres,
     setMostrarPuntosInteres,
-  }
+  };
 
   const sidebarProps: SidebarProps = {
     puntosInteres: puntosInteres,
@@ -112,11 +197,15 @@ const App = () => {
     mostrarHitos,
     mostrarPuntosInteres,
     mostrarCirculos,
-  }
+  };
 
   return (
     <div className="app">
-      <Header onLocationSelect={setCenter} onNewRouteStart={handleNewRouteStart} />
+       {showWelcomePopup && <OnboardingPopup onClose={handleCloseWelcomePopup} />}
+      <Header
+        onLocationSelect={setCenter}
+        onNewRouteStart={handleNewRouteStart}
+      />
       <MapContainer {...mapProps} />
       <Sidebar {...sidebarProps} />
     </div>
