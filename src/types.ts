@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type { Dispatch, SetStateAction } from 'react'; 
+
 export type SearchProps = {
   onLocationSelect: (coords: google.maps.LatLngLiteral) => void;
   onNewRouteStart: (coords: google.maps.LatLngLiteral) => void; 
@@ -95,3 +98,15 @@ export interface ChartWidgetProps {
     barColors?: string[] | ((entry: any, index: number) => string);
     noDataMessage: React.ReactNode;
 }
+
+export interface MockMapMarkersProps {
+    hitos: HitosData[];
+    mostrarHitos: boolean;
+    puntosInteres: PoiData[];
+    mostrarPuntosInteres: boolean;
+    hitoActivo: number | null;
+    setHitoActivo: Dispatch<SetStateAction<number | null>>; 
+    pathPoints: UserPath;
+    setPathPoints: (path: UserPath | ((prevPath: UserPath) => UserPath)) => void;
+}
+
