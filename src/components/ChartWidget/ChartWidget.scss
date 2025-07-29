@@ -1,0 +1,11 @@
+.chartWidget {
+    $self: &;
+
+    box-shadow: 0 8px 10px -6px rgba(0, 0, 0, 0.3); 
+    height:350px;
+    width: 100%;
+
+    #{$self}__widget {
+        height: 200px;
+    }
+}

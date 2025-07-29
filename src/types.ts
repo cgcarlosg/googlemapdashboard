@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type { Dispatch, SetStateAction } from 'react'; 
+
 export type SearchProps = {
   onLocationSelect: (coords: google.maps.LatLngLiteral) => void;
+  onNewRouteStart: (coords: google.maps.LatLngLiteral) => void; 
 };
 
 export type UserPath = google.maps.LatLngLiteral[];
@@ -9,13 +14,6 @@ export type MarkerData = {
   position: google.maps.LatLngLiteral;
 };
 
-export interface MapContainerProps {
-  center: google.maps.LatLngLiteral;
-  onHitosChange: (hitos: HitosData[]) => void;
-  onPuntosInteresChange: (pois: PoiData[]) => void;
-  onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
-}
-
 export interface MapControlsProps {
   mostrarHitos: boolean;
   setMostrarHitos: (value: boolean) => void;
@@ -23,6 +21,7 @@ export interface MapControlsProps {
   setMostrarCirculos: (value: boolean) => void;
   mostrarPuntosInteres: boolean;
   setMostrarPuntosInteres: (value: boolean) => void;
+  onClearData: () => void;
 }
 
 export interface MarkerProps {
@@ -36,11 +35,14 @@ export interface MarkerProps {
   setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
 }
 
-export interface SidebarProps { 
+export interface SidebarProps {
   puntosInteres: PoiData[];
   hitos: HitosData[];
   ageGroupData: AgeGroupData;
-  socioeconomicData: SocioeconomicData; 
+  socioeconomicData: SocioeconomicData;
+  mostrarHitos: boolean;
+  mostrarPuntosInteres: boolean;
+  mostrarCirculos: boolean;
 }
 
 export type PoiData = { position: google.maps.LatLngLiteral; tipo: string };
@@ -61,9 +63,50 @@ export type SocioeconomicData = {
 
 export interface MapContainerProps {
   center: google.maps.LatLngLiteral;
-  onHitosChange: (hitos: HitosData[]) => void;
-  onPuntosInteresChange: (pois: PoiData[]) => void;
-  onDemographicsChange: (ageData: AgeGroupData, socioData: SocioeconomicData) => void;
-  setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
+  hitos: HitosData[];
+  puntosInteres: PoiData[];
+  ageData: AgeGroupData;
+  socioData: SocioeconomicData;
   pathPoints: UserPath;
+  setPathPoints: React.Dispatch<React.SetStateAction<UserPath>>;
+  onClearData: () => void;
+  mostrarHitos: boolean;
+  setMostrarHitos: React.Dispatch<React.SetStateAction<boolean>>;
+  mostrarCirculos: boolean;
+  setMostrarCirculos: React.Dispatch<React.SetStateAction<boolean>>;
+  mostrarPuntosInteres: boolean;
+  setMostrarPuntosInteres: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export interface GenericBarChartProps {
+    data: any[];
+    dataKey: string;
+    categoryKey: string;
+    barColors?: string[] | ((entry: any, index: number) => string); 
+    className?: string;
+}
+
+export interface ChartWidgetProps {
+    title: string;
+    headerLabel?: string;
+    isVisible: boolean;
+    hasData: boolean;
+    content: React.ReactNode;
+    chartData?: any[];
+    dataKey?: string;
+    categoryKey?: string;
+    barColors?: string[] | ((entry: any, index: number) => string);
+    noDataMessage: React.ReactNode;
+}
+
+export interface MockMapMarkersProps {
+    hitos: HitosData[];
+    mostrarHitos: boolean;
+    puntosInteres: PoiData[];
+    mostrarPuntosInteres: boolean;
+    hitoActivo: number | null;
+    setHitoActivo: Dispatch<SetStateAction<number | null>>; 
+    pathPoints: UserPath;
+    setPathPoints: (path: UserPath | ((prevPath: UserPath) => UserPath)) => void;
+}
+
