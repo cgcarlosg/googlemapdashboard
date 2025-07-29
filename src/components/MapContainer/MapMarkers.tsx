@@ -161,34 +161,14 @@ const MapMarkers: React.FC<MarkerProps> = ({
                     {streetViewError ? (
 
                       <div
-                        style={{
-                          padding: "10px",
-                          color: "#FF5733",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                          backgroundColor: "#FFEBEE",
-                          borderRadius: "4px",
-                          border: "1px solid #FF5733",
-                        }}
+                      className="mapcontainer__streetviewbox--error"
                       >
                         {streetViewError}
                       </div>
                     ) : (
                       <div
+                       className="mapcontainer__streetviewbox"
                         ref={initializeStreetView}
-                        style={{
-                          width: "300px",
-                          height: "150px",
-                          marginTop: "10px",
-                          borderRadius: "4px",
-                          overflow: "hidden",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          backgroundColor: '#f0f0f0',
-                          color: '#555',
-                          fontSize: '14px',
-                        }}
                       >
                         {!panoramaInstance.current && "Cargando Street View..."}
                       </div>

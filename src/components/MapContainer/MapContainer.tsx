@@ -36,6 +36,7 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
   const [isMapReady, setIsMapReady] = useState(false);
 
   const isTabletOrLarger = useMediaQuery('(min-width: 1200px)'); 
+  const mapGestureHandling = isTabletOrLarger ? "greedy" : "cooperative";
 
   useEffect(() => {
     if (pathPoints.length < 2) {
@@ -132,7 +133,7 @@ const MapContainer: React.FC<MapContainerProps & { setPathPoints: React.Dispatch
             defaultZoom={13}
             mapId={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
             onClick={handleMapClick}
-            gestureHandling={isTabletOrLarger ? "greedy" : "cooperative"}
+            gestureHandling={mapGestureHandling}
             disableDefaultUI={false}
             onIdle={(ev) => {
               if (!mapRef.current) {
