@@ -79,12 +79,6 @@ const App = () => {
     setAgeGroupData([]);
     setSocioeconomicData([]);
 
-    localStorage.removeItem("mapPathPoints");
-    localStorage.removeItem("mapHitos");
-    localStorage.removeItem("mapPuntosInteres");
-    localStorage.removeItem("mapAgeData");
-    localStorage.removeItem("mapSocioData");
-
   }, [setPathPoints, setHitos, setPuntosInteres, setAgeGroupData, setSocioeconomicData]);
 
    const handleNewRouteStart = useCallback((coords: google.maps.LatLngLiteral) => {
